@@ -8,8 +8,6 @@ public class Employer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    private String fullName;
-    @Column(nullable = false)
     private String  companyName;
     private String website;
     @Column(nullable = false)
@@ -27,14 +25,6 @@ public class Employer {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getCompanyName() {
