@@ -14,6 +14,10 @@ public class Skill {
     @JoinColumn(name = "candidate_id")
     private Candidate candidate;
 
+    @ManyToOne
+    @JoinColumn(name = "job_post_id")
+    private JobPost jobpost;
+
     public Long getId() {
         return id;
     }
