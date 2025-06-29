@@ -28,11 +28,11 @@ public class EmployerService {
         return repo.findById(id).orElseThrow(()->new RuntimeException("Candidate Not Found"));
     }
 
-    public Employer addCandidate(Employer employer){
+    public Employer addEmployer(Employer employer){
         return repo.save(employer);
     }
 
-    public void DeleteEmployer(Long id){
+    public void deleteEmployer(Long id){
        repo.deleteById(id);
     }
     public Employer UpdateEmployer(Long id,Employer employer){

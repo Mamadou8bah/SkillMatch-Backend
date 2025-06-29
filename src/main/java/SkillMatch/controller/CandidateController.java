@@ -36,7 +36,7 @@ public class CandidateController {
         service.deleteCandidate(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public void UpdateCandidate(@PathVariable Long id, @RequestBody Candidate candidate){
         service.UpdateCandidate(id,candidate);
     }

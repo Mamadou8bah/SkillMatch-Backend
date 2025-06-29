@@ -5,14 +5,12 @@ import SkillMatch.model.Employer;
 import SkillMatch.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequestMapping("/employer")
+@RestController
+@RequestMapping("/employers")
 public class EmployerController {
 
     @Autowired
@@ -26,5 +24,19 @@ public class EmployerController {
     @GetMapping("/employer/{id}")
     public Employer getEmployerById( @PathVariable long id){
         return service.getEmployerById(id);
+    }
+    @PostMapping
+    public Employer addEmployer(@RequestBody Employer employer){
+        return service.addEmployer(employer);
+    }
+
+    @DeleteMapping
+    public void delteEmployer(@PathVariable long id){
+        service.deleteEmployer(id);
+    }
+
+    @PutMapping("/{id}")
+    public void updateEmployer(@PathVariable long id,@RequestBody Employer employer){
+        service.UpdateEmployer(id,employer);
     }
 }
