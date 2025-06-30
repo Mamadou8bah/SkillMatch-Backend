@@ -48,11 +48,11 @@
 		</dependency>
 
 
-		<!-- Spring Boot Starter Security for role-based access -->
+	<!--	 Spring Boot Starter Security for role-based access
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<!-- Spring Boot Starter Test for unit and integration testing -->
 		<dependency>

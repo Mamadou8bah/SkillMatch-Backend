@@ -4,6 +4,7 @@ import SkillMatch.util.Role;
 import jakarta.persistence.*;
 import jdk.jfr.Name;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,7 +26,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private boolean isActive;
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt=LocalDateTime.now();
 
     @OneToOne(mappedBy = "user")
     private Candidate candidate;
@@ -82,6 +83,8 @@ public class User {
     }
 
     public LocalDateTime getCreatedAt() {
+
+
         return createdAt;
     }
 

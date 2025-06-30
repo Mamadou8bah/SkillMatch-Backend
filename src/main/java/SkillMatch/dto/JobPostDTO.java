@@ -1,10 +1,12 @@
 package SkillMatch.dto;
 
+import SkillMatch.model.Employer;
+
 public class JobPostDTO {
     private String title;
-    private String employerName;
+    private Employer employerName;
 
-    public JobPostDTO(String title, String employerName) {
+    public JobPostDTO(String title, Employer employerName) {
         this.title = title;
         this.employerName = employerName;
     }
@@ -17,11 +19,11 @@ public class JobPostDTO {
         this.title = title;
     }
 
-    public String getEmployerName() {
+    public Employer getEmployerName() {
         return employerName;
     }
 
-    public void setEmployerName(String employerName) {
+    public void setEmployerName(Employer employerName) {
         this.employerName = employerName;
     }
 }

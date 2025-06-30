@@ -30,8 +30,8 @@ public class EmployerController {
         return service.addEmployer(employer);
     }
 
-    @DeleteMapping
-    public void delteEmployer(@PathVariable long id){
+    @DeleteMapping("/{id}")
+    public void deleteEmployer(@PathVariable long id){
         service.deleteEmployer(id);
     }
 
