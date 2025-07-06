@@ -42,6 +42,7 @@ public class UserService {
         user.setFullName(newUser.getFullName());
         user.setPassword(newUser.getPassword());
 
+        repo.save(user);
         return  user;
     }
 }

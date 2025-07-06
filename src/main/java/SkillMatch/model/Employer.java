@@ -15,6 +15,8 @@ public class Employer {
     @Column(nullable = false)
     private String industry;
     @Column(nullable = false)
+    private String location;
+    @Column(nullable = false)
     private String description;
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -64,6 +66,22 @@ public class Employer {
 
     public User getUser() {
         return user;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<JobPost> getJobPosts() {
+        return jobPosts;
+    }
+
+    public void setJobPosts(List<JobPost> jobPosts) {
+        this.jobPosts = jobPosts;
     }
 
     public void setUser(User user) {
