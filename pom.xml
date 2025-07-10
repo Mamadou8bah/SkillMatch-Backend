@@ -48,11 +48,18 @@
 		</dependency>
 
 
-	<!--	 Spring Boot Starter Security for role-based access
+	<!--	 Spring Boot Starter Security for role-based access-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>-->
+		</dependency>
+		<!-- JWT support -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 
 		<!-- Spring Boot Starter Test for unit and integration testing -->
 		<dependency>
