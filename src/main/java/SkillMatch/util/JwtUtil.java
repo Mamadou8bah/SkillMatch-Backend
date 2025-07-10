@@ -1,7 +1,4 @@
 package SkillMatch.util;
-
-
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -17,7 +14,7 @@ public class JwtUtil {
     private final Key key;
     private final long EXPIRATION_TIME = 86400000; // 1 day in ms
 
-    public JwtUtil(@Value("$jwt.secret") String secret) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
