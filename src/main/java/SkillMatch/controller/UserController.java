@@ -21,10 +21,7 @@ public class UserController {
         return service.getUsers();
     }
 
-    @PostMapping
-    public User register(@RequestBody User user){
-        return service.register(user);
-    }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable long id){
        return service.getUserById(id);
