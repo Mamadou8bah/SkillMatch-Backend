@@ -18,6 +18,8 @@ public class Candidate {
     private User user;
     @Column(length = 200)
     private String bio;
+
+    private String cvUrl;
     @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> skills;
     private String location;
@@ -28,6 +30,9 @@ public class Candidate {
 
     @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Education> educationHistory;
+
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+    private List<Application> applications;
     public Long getId() {
         return id;
     }
@@ -38,6 +43,14 @@ public class Candidate {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public String getCvUrl() {
+        return cvUrl;
+    }
+
+    public void setCvUrl(String cvUrl) {
+        this.cvUrl = cvUrl;
     }
 
     public void setFullName(String fullName) {
@@ -90,5 +103,13 @@ public class Candidate {
 
     public void setEducationHistory(List<Education> educationHistory) {
         this.educationHistory = educationHistory;
+    }
+
+    public List<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
     }
 }

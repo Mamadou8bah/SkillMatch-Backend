@@ -20,6 +20,9 @@ public class JobPost {
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;
 
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL)
+    private List<Application> applications;
+
     public Long getId() {
         return id;
     }
