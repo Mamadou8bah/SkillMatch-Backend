@@ -5,6 +5,7 @@ import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.model.User;
 import SkillMatch.service.UserService;
+import SkillMatch.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,8 @@ public class AuthController {
     UserService service;
 
     @PostMapping("/register")
-    public ResponseEntity<?>register(@RequestBody User user){
+    public ResponseEntity<?>register(@RequestBody User user, @RequestParam Role role){
+        user.setRole(role);
         User user1=service.register(user);
         return ResponseEntity.ok(user1);
     }
