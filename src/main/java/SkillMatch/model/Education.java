@@ -4,6 +4,7 @@ import SkillMatch.util.EducationType;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "education")
 public class Education {
 
     @Id
