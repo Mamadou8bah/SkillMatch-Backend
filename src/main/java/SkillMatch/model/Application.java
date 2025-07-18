@@ -1,10 +1,19 @@
 package SkillMatch.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "applications")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Application {
 
     @Id
@@ -30,63 +39,7 @@ public class Application {
     private LocalDateTime updatedAt;
 
 
-    public Application() {}
 
-    public Application(Candidate candidate, JobPost jobPost, String status) {
-        this.candidate = candidate;
-        this.jobPost = jobPost;
-        this.status = status;
-    }
-
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public Candidate getCandidate() {
-        return candidate;
-    }
-
-    public JobPost getJobPost() {
-        return jobPost;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
-    }
-
-    public void setJobPost(JobPost jobPost) {
-        this.jobPost = jobPost;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
     @PrePersist
     protected void onCreate() {

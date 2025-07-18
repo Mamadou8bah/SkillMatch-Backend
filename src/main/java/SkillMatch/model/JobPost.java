@@ -1,10 +1,18 @@
 package SkillMatch.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class JobPost {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,43 +31,5 @@ public class JobPost {
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL)
     private List<Application> applications;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Employer getEmployer() {
-        return employer;
-    }
-
-    public void setEmployer(Employer employer) {
-        this.employer = employer;
-    }
-
-    public List<Skill> getRequiredSkills() {
-        return requiredSkills;
-    }
-
-    public void setRequiredSkills(List<Skill> requiredSkills) {
-        this.requiredSkills = requiredSkills;
-    }
 }

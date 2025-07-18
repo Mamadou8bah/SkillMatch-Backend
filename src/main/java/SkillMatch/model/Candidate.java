@@ -20,6 +20,9 @@ public class Candidate {
     @Column(length = 200)
     private String bio;
 
+    @Column(length = 200)
+    private String profession;
+
     private String cvUrl;
     @OneToMany(mappedBy = "candidate",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> skills;

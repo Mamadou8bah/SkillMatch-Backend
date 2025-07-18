@@ -34,10 +34,10 @@ public class User implements UserDetails {
     private boolean isActive;
     private LocalDateTime createdAt=LocalDateTime.now();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Candidate candidate;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Employer employer;
 
     public Long getId() {

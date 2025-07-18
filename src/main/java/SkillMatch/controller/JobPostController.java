@@ -16,8 +16,9 @@ public class JobPostController {
     JobPostService service;
 
     @GetMapping
-    public List<JobPostDTO> getJobPost(){
-        return service.getJobPost();
+    public List<JobPostDTO> getJobPost(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "5") int size){
+        return service.getJobPost(page, size);
     }
 
     @PostMapping

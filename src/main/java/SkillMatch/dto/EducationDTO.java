@@ -1,29 +1,18 @@
 package SkillMatch.dto;
 
 import SkillMatch.util.EducationType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class EducationDTO {
     private String degree;
     private EducationType educationType;
 
-    public EducationDTO(String degree, EducationType educationType) {
-        this.degree = degree;
-        this.educationType = educationType;
-    }
 
-    public String getDegree() {
-        return degree;
-    }
-
-    public void setDegree(String degree) {
-        this.degree = degree;
-    }
-
-    public EducationType getEducationType() {
-        return educationType;
-    }
-
-    public void setEducationType(EducationType educationType) {
-        this.educationType = educationType;
-    }
 }
