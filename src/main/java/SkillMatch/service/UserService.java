@@ -2,6 +2,7 @@ package SkillMatch.service;
 
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
+import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
 import SkillMatch.model.Candidate;
 import SkillMatch.model.User;
@@ -63,18 +64,17 @@ public class UserService {
         return  user;
     }
 
-    public User register(User user) {
+    public User register(RegisterRequest request) {
 
-        if (repo.findByEmail(user.getEmail()) != null) {
+        if (repo.findByEmail(request.getEmail()) != null) {
             throw new IllegalArgumentException("Email already in use");
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-
-        if(user.getRole()== Role.CANDIDATE){
-            Candidate candidate=new Candidate();
-            candidate.setUser(user);
-            candidateService.addCandidate(candidate);
-        }
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(encoder.encode(request.getPassword()));
+        user.setProfilePicture(request.getProfilePicture());
+        user.setLocation(request.getLocation());
         return repo.save(user);
     }
     public LoginResponse login(LoginRequest request){
@@ -84,7 +84,7 @@ public class UserService {
         if(!encoder.matches(request.getPassword(), user.getPassword())){
             throw new RuntimeException("Invalid Credentials");
         }
-        return  new LoginResponse(jwtUtil.generateKey(user.getEmail()));
+        return  new LoginResponse(jwtUtil.generateToken(user.getEmail()));
     }
     public User getLogInUser(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();

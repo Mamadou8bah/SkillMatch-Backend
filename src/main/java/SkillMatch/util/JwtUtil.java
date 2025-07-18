@@ -15,20 +15,20 @@ public class JwtUtil {
     private final Key key;
     private final long EXPIRATION_TIME = 86400000; // 1 day in ms
 
-    public JwtUtil(@Value("${JWT_SECRET}") String secret) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateKey(String email){
+    public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256,key)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String extractUserNameFromToken(String token){
+    public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -37,9 +37,9 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    public boolean isTokenValid(String token){
+    public boolean isTokenValid(String token) {
         try {
-            return extractUserNameFromToken(token) != null;
+            return extractUsername(token) != null;
         } catch (Exception e) {
             return false;
         }
