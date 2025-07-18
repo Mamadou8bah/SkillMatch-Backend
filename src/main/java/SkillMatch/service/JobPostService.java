@@ -5,6 +5,10 @@ import SkillMatch.model.Employer;
 import SkillMatch.model.JobPost;
 import SkillMatch.repository.JobPostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,8 +23,10 @@ public class JobPostService {
     public JobPost addJob(JobPost jobPost){
         return repo.save(jobPost);
     }
-    public List<JobPostDTO> getJobPost(){
-        List<JobPost>posts=repo.findAll();
+    public List<JobPostDTO> getJobPost(int pageNo,int readCount){
+        Pageable pageable= PageRequest.of(pageNo, readCount);
+        Page<JobPost> page=repo.findAll(pageable);
+        List<JobPost> posts=page.getContent();
         List<JobPostDTO>dtos=new ArrayList<>();
 
         for (JobPost post:posts){
@@ -36,6 +42,8 @@ public class JobPostService {
     }
 
     public List<JobPostDTO> searchPosts(String title){
+
+
         List<JobPost>posts=repo.findByTitleContainingIgnoreCase(title);
         List<JobPostDTO>dtos=new ArrayList<>();
         for (JobPost post:posts){
