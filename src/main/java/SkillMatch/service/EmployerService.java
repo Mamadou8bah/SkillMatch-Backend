@@ -15,13 +15,9 @@ public class EmployerService {
     @Autowired
     private EmployerRepo repo;
 
-    public List<EmployerDTO> getEmployers(){
+    public List<Employer> getEmployers(){
        List<Employer>employers=repo.findAll();
-       List <EmployerDTO> employerDTOS=new ArrayList<>();
-       for (Employer employer:employers){
-           employerDTOS.add(new EmployerDTO(employer.getCompanyName(), employer.getWebsite(), employer.getIndustry()));
-       }
-       return employerDTOS;
+       return employers;
     }
 
     public Employer getEmployerById(Long id){

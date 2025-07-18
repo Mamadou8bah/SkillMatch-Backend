@@ -4,6 +4,9 @@ import SkillMatch.dto.CandidateDTO;
 import SkillMatch.model.Candidate;
 import SkillMatch.repository.CandidateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,11 +17,17 @@ public class CandidateService {
     @Autowired
     private CandidateRepo repo;
 
-    public List<CandidateDTO>getCandidates(){
-        List<Candidate> candidates=repo.findAll();
+    public List<CandidateDTO>getCandidates(int page,int size){
+
+
+        Pageable pageable= PageRequest.of(page, size);
+
+        Page<Candidate>pages=repo.findAll(pageable);
+        List<Candidate> candidates=pages.getContent();
         List<CandidateDTO> candidateDTOS=new ArrayList<>();
         for (Candidate candidate:candidates){
-            candidateDTOS.add(new CandidateDTO(candidate.getFullName(), candidate.getLocation(),candidate.getSkills()));
+
+            candidateDTOS.add(new CandidateDTO(candidate.getUser().getFullName(), candidate.getUser().getLocation(),candidate.getSkills()));
         }
         return candidateDTOS;
     }

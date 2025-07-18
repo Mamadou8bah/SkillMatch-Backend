@@ -11,6 +11,4 @@ import lombok.Setter;
 @Setter
 public class SkillDTO {
     private String title;
-
-
 }

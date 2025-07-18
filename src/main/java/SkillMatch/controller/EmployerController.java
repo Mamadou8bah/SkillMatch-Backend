@@ -1,10 +1,8 @@
 package SkillMatch.controller;
 
-import SkillMatch.dto.EmployerDTO;
 import SkillMatch.model.Employer;
 import SkillMatch.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +15,7 @@ public class EmployerController {
     public EmployerService service;
 
     @GetMapping
-    public List<EmployerDTO>getEmployers(){
+    public List<Employer>getEmployers(){
         return service.getEmployers();
     }
 

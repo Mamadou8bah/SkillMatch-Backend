@@ -23,18 +23,12 @@ public class JobPostService {
     public JobPost addJob(JobPost jobPost){
         return repo.save(jobPost);
     }
-    public List<JobPostDTO> getJobPost(int pageNo,int readCount){
+    public List<JobPost> getJobPost(int pageNo,int readCount){
         Pageable pageable= PageRequest.of(pageNo, readCount);
         Page<JobPost> page=repo.findAll(pageable);
         List<JobPost> posts=page.getContent();
-        List<JobPostDTO>dtos=new ArrayList<>();
 
-        for (JobPost post:posts){
-
-            Employer employer= post.getEmployer();
-            dtos.add(new JobPostDTO(post.getTitle(), post.getEmployer()));
-        }
-        return dtos;
+        return posts;
     }
 
     public JobPost getJobPostById(long id){

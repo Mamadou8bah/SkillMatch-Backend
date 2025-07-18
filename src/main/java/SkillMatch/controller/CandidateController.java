@@ -17,8 +17,8 @@ public class CandidateController {
     private CandidateService service;
 
     @GetMapping
-    public List<CandidateDTO>getCandidates(){
-        return service.getCandidates();
+    public List<CandidateDTO>getCandidates(@RequestParam(defaultValue ="1")int page,@RequestParam(defaultValue = "10")int size){
+        return service.getCandidates(page, size);
     }
 
     @GetMapping("/{id}")

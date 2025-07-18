@@ -3,9 +3,11 @@ package SkillMatch.service;
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.UserDTO;
+import SkillMatch.model.Candidate;
 import SkillMatch.model.User;
 import SkillMatch.repository.UserRepo;
 import SkillMatch.util.JwtUtil;
+import SkillMatch.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,9 @@ public class UserService {
 
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    CandidateService candidateService;
     public List<UserDTO>getUsers(){
         List<User> users= repo.findAll();
         List<UserDTO> userDTOS=new ArrayList<>();
@@ -64,6 +69,12 @@ public class UserService {
             throw new IllegalArgumentException("Email already in use");
         }
         user.setPassword(encoder.encode(user.getPassword()));
+
+        if(user.getRole()== Role.CANDIDATE){
+            Candidate candidate=new Candidate();
+            candidate.setUser(user);
+            candidateService.addCandidate(candidate);
+        }
         return repo.save(user);
     }
     public LoginResponse login(LoginRequest request){

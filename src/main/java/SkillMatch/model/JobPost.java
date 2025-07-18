@@ -28,6 +28,9 @@ public class JobPost {
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;
 
+    @Column(name = "salary", nullable = false)
+    private double salary;
+
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL)
     private List<Application> applications;
 
