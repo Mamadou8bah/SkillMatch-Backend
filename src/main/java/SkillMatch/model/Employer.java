@@ -26,6 +26,8 @@ public class Employer {
     private String location;
     @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
+    private String picture;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

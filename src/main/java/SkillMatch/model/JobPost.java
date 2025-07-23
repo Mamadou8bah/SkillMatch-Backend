@@ -1,5 +1,6 @@
 package SkillMatch.model;
 
+import SkillMatch.util.LocationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,8 @@ public class JobPost {
     @JoinColumn(name = "employer_id")
     private Employer employer;
 
+    @Column(nullable = false)
+    private LocationType locationType;
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;
 
