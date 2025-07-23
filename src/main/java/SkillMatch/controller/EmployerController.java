@@ -3,6 +3,7 @@ package SkillMatch.controller;
 import SkillMatch.model.Employer;
 import SkillMatch.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,26 +16,28 @@ public class EmployerController {
     public EmployerService service;
 
     @GetMapping
-    public List<Employer>getEmployers(){
-        return service.getEmployers();
+    public ResponseEntity<?>getEmployers(){
+        return ResponseEntity.ok(service.getEmployers());
     }
 
     @GetMapping("/employer/{id}")
-    public Employer getEmployerById( @PathVariable long id){
-        return service.getEmployerById(id);
+    public ResponseEntity<?> getEmployerById( @PathVariable long id){
+        return ResponseEntity.ok(service.getEmployerById(id));
     }
     @PostMapping
-    public Employer addEmployer(@RequestBody Employer employer){
-        return service.addEmployer(employer);
+    public ResponseEntity<?> addEmployer(@RequestBody Employer employer){
+        return ResponseEntity.ok(service.addEmployer(employer));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEmployer(@PathVariable long id){
+    public ResponseEntity<?> deleteEmployer(@PathVariable long id){
         service.deleteEmployer(id);
+        return ResponseEntity.ok("Profile Deleted");
     }
 
     @PutMapping("/{id}")
-    public void updateEmployer(@PathVariable long id,@RequestBody Employer employer){
+    public ResponseEntity<?> updateEmployer(@PathVariable long id,@RequestBody Employer employer){
         service.UpdateEmployer(id,employer);
+        return ResponseEntity.ok("Profile Updated");
     }
 }

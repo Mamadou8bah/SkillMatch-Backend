@@ -17,19 +17,12 @@ public class CandidateService {
     @Autowired
     private CandidateRepo repo;
 
-    public List<CandidateDTO>getCandidates(int page,int size){
-
-
+    public List<Candidate>getCandidates(int page,int size){
         Pageable pageable= PageRequest.of(page, size);
 
         Page<Candidate>pages=repo.findAll(pageable);
         List<Candidate> candidates=pages.getContent();
-        List<CandidateDTO> candidateDTOS=new ArrayList<>();
-        for (Candidate candidate:candidates){
-
-            candidateDTOS.add(new CandidateDTO(candidate.getUser().getFullName(), candidate.getUser().getLocation(),candidate.getSkills()));
-        }
-        return candidateDTOS;
+        return candidates;
     }
 
     public Candidate getCandidateByID(Long id){

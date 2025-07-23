@@ -1,13 +1,14 @@
 package SkillMatch.controller;
 
-import SkillMatch.dto.CandidateDTO;
+
 import SkillMatch.model.Candidate;
 import SkillMatch.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @Controller
 @RequestMapping("/candidates")
@@ -17,28 +18,31 @@ public class CandidateController {
     private CandidateService service;
 
     @GetMapping
-    public List<CandidateDTO>getCandidates(@RequestParam(defaultValue ="1")int page,@RequestParam(defaultValue = "10")int size){
-        return service.getCandidates(page, size);
+    public ResponseEntity<?> getCandidates(@RequestParam(defaultValue ="1")int page, @RequestParam(defaultValue = "10")int size){
+        return ResponseEntity.ok(service.getCandidates(page, size)) ;
     }
 
     @GetMapping("/{id}")
-    public Candidate getCandidateByID( @PathVariable Long id){
-        return service.getCandidateByID(id);
+    public ResponseEntity<?> getCandidateByID( @PathVariable Long id){
+        Candidate candidate= service.getCandidateByID(id);
+        return ResponseEntity.status(200).body(candidate);
     }
 
     @PostMapping
-    public Candidate addCandidate(@RequestBody Candidate candidate){
-        return service.addCandidate(candidate);
+    public ResponseEntity<?> addCandidate(@RequestBody Candidate candidate){
+        return ResponseEntity.status(201).body(service.addCandidate(candidate));
     }
 
     @DeleteMapping
-    public void deleteCandidate(@RequestBody Long id){
+    public ResponseEntity<?> deleteCandidate(@RequestBody Long id){
         service.deleteCandidate(id);
+        return ResponseEntity.ok("Candidate Deleted");
     }
 
     @PutMapping("/{id}")
-    public void UpdateCandidate(@PathVariable Long id, @RequestBody Candidate candidate){
+    public ResponseEntity<?> UpdateCandidate(@PathVariable Long id, @RequestBody Candidate candidate){
         service.UpdateCandidate(id,candidate);
+        return ResponseEntity.ok("Candidate updated");
     }
 
 
