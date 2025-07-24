@@ -1,7 +1,10 @@
 package SkillMatch.util;
+import SkillMatch.model.Token;
+import SkillMatch.repository.TokenRepo;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +17,9 @@ public class JwtUtil {
 
     private final Key key;
     private final long EXPIRATION_TIME = 86400000; // 1 day in ms
+
+    @Autowired
+    private TokenRepo repo;
 
     public JwtUtil(@Value("${jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
@@ -39,7 +45,10 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token) {
         try {
-            return extractUsername(token) != null;
+            Token token1=repo.findByToken(token);
+            if (token1 == null) return false;
+            boolean isValid=!token1.isExpired()|| !token1.isRevoked();
+            return isValid;
         } catch (Exception e) {
             return false;
         }

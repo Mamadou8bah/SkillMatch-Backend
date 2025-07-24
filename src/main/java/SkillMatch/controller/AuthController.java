@@ -7,8 +7,10 @@ import SkillMatch.dto.RegisterRequest;
 import SkillMatch.model.User;
 import SkillMatch.service.UserService;
 import SkillMatch.util.Role;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,5 +39,12 @@ public class AuthController {
         User user= service.getLogInUser();
         return ResponseEntity.ok(user);
     }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        service.logout(request.getHeader("Authorization"));
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
 
 }

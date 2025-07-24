@@ -49,6 +49,9 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Employer employer;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token>tokens;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

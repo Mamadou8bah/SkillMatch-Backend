@@ -4,7 +4,9 @@ import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
+import SkillMatch.model.Token;
 import SkillMatch.model.User;
+import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
 import SkillMatch.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class UserService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    TokenRepo tokenRepo;
     @Autowired
     CandidateService candidateService;
     public List<UserDTO>getUsers(){
@@ -81,7 +85,14 @@ public class UserService {
         if(!encoder.matches(request.getPassword(), user.getPassword())){
             throw new RuntimeException("Invalid Credentials");
         }
-        return  new LoginResponse(jwtUtil.generateToken(user.getEmail()));
+        String jwtToken=jwtUtil.generateToken(user.getEmail());
+        Token token=new Token();
+        token.setToken(jwtToken);
+        token.setRevoked(false);
+        token.setExpired(false);
+        token.setUser(user);
+        tokenRepo.save(token);
+        return  new LoginResponse(jwtToken);
     }
     public User getLogInUser(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -94,6 +105,17 @@ public class UserService {
         User user=repo.findByEmail(email);
 
         return user;
+    }
+
+    public void logout(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        String jwt = authHeader.substring(7);
+        Token token=tokenRepo.findByToken(jwt);
+        token.setExpired(true);
+        token.setRevoked(true);
+        tokenRepo.save(token);
     }
 
 }
