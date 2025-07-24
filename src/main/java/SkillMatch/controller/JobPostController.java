@@ -21,7 +21,7 @@ public class JobPostController {
         return service.getJobPost(page, size);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public JobPost addJob(@RequestBody JobPost jobPost){
         return service.addJob(jobPost);
     }
