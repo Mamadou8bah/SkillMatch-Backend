@@ -20,7 +20,7 @@ public class ApplicationService {
         Long candidateId = application.getCandidate().getId();
         Long jobId = application.getJobPost().getId();
 
-        Optional<Application> existingApp = repository.findByCandidateIdAndJobId(candidateId, jobId);
+        Optional<Application> existingApp = repository.findByCandidate_IdAndJobPost_Id(candidateId, jobId);
 
         if (existingApp.isPresent()) {
             throw new RuntimeException("You have already applied to this job.");

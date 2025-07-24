@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application,Long> {
 
-    Optional<Application> findByCandidateIdAndJobId(Long candidateId, Long jobId);
+    Optional<Application> findByCandidate_IdAndJobPost_Id(Long candidateId, Long jobId);
 
 }
