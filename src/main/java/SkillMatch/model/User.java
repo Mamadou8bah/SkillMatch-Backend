@@ -55,7 +55,7 @@ public class User implements UserDetails {
     private List<Token>tokens;
 
     @OneToMany(mappedBy = "user")
-    private List<SecureTokenModel>secureTokens;
+    private List<SecureToken>secureTokens;
 
     private boolean accountVerified;
 

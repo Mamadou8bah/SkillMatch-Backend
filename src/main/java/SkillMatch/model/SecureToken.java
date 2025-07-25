@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "secureTokens")
-public class SecureTokenModel {
+public class SecureToken {
     @Id
     @GeneratedValue
     private long id;
