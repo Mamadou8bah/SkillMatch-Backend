@@ -4,12 +4,18 @@ import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
+import SkillMatch.exception.UserAlreadyExistException;
+import SkillMatch.model.SecureToken;
 import SkillMatch.model.Token;
 import SkillMatch.model.User;
 import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
+import SkillMatch.util.AccountVerificationEmailContext;
 import SkillMatch.util.JwtUtil;
+import SkillMatch.util.Role;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,13 +32,20 @@ public class UserService {
 
 
     @Autowired
+    private EmailService emailService;
+    @Autowired
     BCryptPasswordEncoder encoder;
 
     @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
+    private SecureTokenService secureTokenService;
+    @Autowired
     TokenRepo tokenRepo;
+
+    @Value("${site.base.url}")
+    private String baseUrl;
     @Autowired
     CandidateService candidateService;
     public List<UserDTO>getUsers(){
@@ -65,10 +78,10 @@ public class UserService {
         return  user;
     }
 
-    public User register(RegisterRequest request) {
+    public User register(RegisterRequest request, Role role) throws UserAlreadyExistException {
 
         if (repo.findByEmail(request.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new UserAlreadyExistException("User Already Exist");
         }
         User user = new User();
         user.setFullName(request.getFullName());
@@ -76,7 +89,13 @@ public class UserService {
         user.setPassword(encoder.encode(request.getPassword()));
         user.setProfilePicture(request.getProfilePicture());
         user.setLocation(request.getLocation());
-        return repo.save(user);
+        user.setRole(role);
+        user.setActive(true);
+        user.setAccountVerified(false);
+        User saveUser=repo.save(user);
+        sendRegistrationConfirmationEmail(saveUser);
+        return saveUser;
+
     }
     public LoginResponse login(LoginRequest request){
         User user=repo.findByEmail(request.getEmail());
@@ -116,6 +135,34 @@ public class UserService {
         token.setExpired(true);
         token.setRevoked(true);
         tokenRepo.save(token);
+    }
+    public void sendRegistrationConfirmationEmail(User user){
+        SecureToken secureToken=secureTokenService.createToken();
+        secureToken.setUser(user);
+        secureTokenService.saveToken(secureToken);
+
+        AccountVerificationEmailContext context=new AccountVerificationEmailContext();
+        context.init(user);
+        context.setToken(secureToken.getToken());
+        context.buildVerificationUrl(baseUrl,secureToken.getToken());
+        try {
+            emailService.sendMail(context);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean verifyAccount(String token) {
+        SecureToken secureToken = secureTokenService.findByToken(token);
+        if (secureToken == null || secureToken.getExpiredAt().isBefore(java.time.LocalDateTime.now())) {
+            return false;
+        }
+        
+        User user = secureToken.getUser();
+        user.setAccountVerified(true);
+        repo.save(user);
+        secureTokenService.removeToken(secureToken);
+        return true;
     }
 
 }

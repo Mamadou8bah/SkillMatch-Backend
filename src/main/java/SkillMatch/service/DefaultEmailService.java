@@ -22,9 +22,15 @@ public class DefaultEmailService implements EmailService{
     public void sendMail(AbstractEmailContext email) throws MessagingException {
         MimeMessage mimeMessage=emailSender.createMimeMessage();
         MimeMessageHelper messageHelper=new MimeMessageHelper(mimeMessage,MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        
         Context context=new Context();
         context.setVariables(email.getContext());
         String emailContent=templateEngine.process(email.getTemplateLocation(),context);
+        
+        messageHelper.setTo(email.getTo());
+        messageHelper.setFrom(email.getFrom());
+        messageHelper.setSubject(email.getSubject());
+        messageHelper.setText(emailContent, true); // true indicates HTML content
 
         emailSender.send(mimeMessage);
     }

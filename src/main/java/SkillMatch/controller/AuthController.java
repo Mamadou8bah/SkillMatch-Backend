@@ -4,10 +4,12 @@ package SkillMatch.controller;
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.RegisterRequest;
+import SkillMatch.exception.UserAlreadyExistException;
 import SkillMatch.model.User;
 import SkillMatch.service.UserService;
 import SkillMatch.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,10 +22,10 @@ public class AuthController {
     @Autowired
     UserService service;
 
+    @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?>register(@RequestBody RegisterRequest request, @RequestParam Role role){
-        User registeredUser = service.register(request);
-        registeredUser.setRole(role);
+    public ResponseEntity<?>register(@RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
+        User registeredUser = service.register(request, role);
         return ResponseEntity.ok(registeredUser);
     }
 
@@ -44,6 +46,20 @@ public class AuthController {
         service.logout(request.getHeader("Authorization"));
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/register/verify")
+    public ResponseEntity<?> verifyAccount(@RequestParam String token) {
+        try {
+            boolean isVerified = service.verifyAccount(token);
+            if (isVerified) {
+                return ResponseEntity.ok("Account verified successfully! You can now log in.");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid or expired verification token.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Verification failed: " + e.getMessage());
+        }
     }
 
 
