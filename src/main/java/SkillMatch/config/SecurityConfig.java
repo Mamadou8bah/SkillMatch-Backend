@@ -24,7 +24,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login","/api/auth/register","/api/auth/register/verify","/","/employers").permitAll()
+                        .requestMatchers("/api/auth/login","/api/auth/register","/register/verify","/","/employers").permitAll()
                         .requestMatchers("/post/add").hasAnyAuthority("admin:write","employer:write")
                         .requestMatchers("/api/auth/me").authenticated()
                         .anyRequest().authenticated()

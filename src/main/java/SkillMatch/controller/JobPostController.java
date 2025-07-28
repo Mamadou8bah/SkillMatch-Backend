@@ -1,9 +1,8 @@
 package SkillMatch.controller;
-
-import SkillMatch.dto.JobPostDTO;
 import SkillMatch.model.JobPost;
 import SkillMatch.service.JobPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,36 +15,41 @@ public class JobPostController {
     JobPostService service;
 
     @GetMapping
-    public List<JobPost> getJobPost(@RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "5") int size){
-        return service.getJobPost(page, size);
+    public ResponseEntity<?> getJobPost(@RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "5") int size){
+        return ResponseEntity.ok(service.getJobPost(page, size));
     }
 
     @PostMapping("/add")
-    public JobPost addJob(@RequestBody JobPost jobPost){
-        return service.addJob(jobPost);
+    public ResponseEntity<?> addJob(@RequestBody JobPost jobPost){
+         service.addJob(jobPost);
+         return ResponseEntity.ok("Job Added");
     }
 
 
 
     @GetMapping("/{id}")
-    public JobPost getJobPostById(@PathVariable long id){
-        return service.getJobPostById(id);
+    public ResponseEntity<?> getJobPostById(@PathVariable long id){
+        JobPost post= service.getJobPostById(id);
+        return ResponseEntity.ok(post);
     }
 
     @GetMapping("/search")
-    public List<JobPostDTO> searchPosts(@RequestParam String title){
-        return service.searchPosts(title);
+    public ResponseEntity<?> searchPosts(@RequestParam String title){
+        List<JobPost>posts= service.searchPosts(title);
+        return ResponseEntity.ok(posts);
     }
 
 
     @PutMapping("/{id}")
-    public JobPost updateJobPost(@PathVariable long id,@RequestBody JobPost newPost){
-       return service.updateJobPost(id,newPost);
+    public ResponseEntity<?> updateJobPost(@PathVariable long id,@RequestBody JobPost newPost){
+       JobPost post= service.updateJobPost(id,newPost);
+       return ResponseEntity.ok(post);
     }
 
     @DeleteMapping("/{id}")
-    public JobPost deletePost(long id){
-       return service.deletePost(id);
+    public ResponseEntity<?> deletePost(long id){
+        service.deletePost(id);
+        return ResponseEntity.ok("Post Deleted");
     }
 }

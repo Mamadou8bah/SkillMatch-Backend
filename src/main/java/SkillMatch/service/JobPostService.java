@@ -35,17 +35,11 @@ public class JobPostService {
         return repo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
     }
 
-    public List<JobPostDTO> searchPosts(String title){
+    public List<JobPost> searchPosts(String title){
 
 
         List<JobPost>posts=repo.findByTitleContainingIgnoreCase(title);
-        List<JobPostDTO>dtos=new ArrayList<>();
-        for (JobPost post:posts){
-
-            Employer employer= post.getEmployer();
-            dtos.add(new JobPostDTO(post.getTitle(), post.getEmployer()));
-        }
-        return dtos;
+        return posts;
     }
 
     public JobPost updateJobPost(long id, JobPost newPost){
