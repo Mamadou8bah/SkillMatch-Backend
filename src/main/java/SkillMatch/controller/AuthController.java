@@ -5,7 +5,11 @@ import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.exception.UserAlreadyExistException;
+import SkillMatch.model.Candidate;
+import SkillMatch.model.Employer;
 import SkillMatch.model.User;
+import SkillMatch.service.CandidateService;
+import SkillMatch.service.EmployerService;
 import SkillMatch.service.UserService;
 import SkillMatch.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +26,25 @@ public class AuthController {
     @Autowired
     UserService service;
 
+    @Autowired
+    EmployerService employerService;
+
+    @Autowired
+    CandidateService candidateService;
+
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<?>register(@RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
         User registeredUser = service.register(request, role);
+        if (role==Role.CANDIDATE) {
+            Candidate candidate = new Candidate();
+            candidate.setUser(registeredUser);
+            candidateService.addCandidate(candidate);
+        } else if (role==Role.EMPLOYER) {
+            Employer employer = new Employer();
+            employer.setUser(registeredUser);
+            employerService.addEmployer(employer);
+        }
         return ResponseEntity.ok(registeredUser);
     }
 
