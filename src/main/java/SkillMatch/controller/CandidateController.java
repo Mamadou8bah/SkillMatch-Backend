@@ -3,14 +3,15 @@ package SkillMatch.controller;
 
 import SkillMatch.model.Candidate;
 import SkillMatch.service.CandidateService;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
 
-@Controller
+@RestController
 @RequestMapping("/candidates")
 public class CandidateController {
 
@@ -29,7 +30,7 @@ public class CandidateController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addCandidate(@RequestBody Candidate candidate){
+    public ResponseEntity<?> addCandidate(@Valid @RequestBody Candidate candidate){
         return ResponseEntity.status(201).body(service.addCandidate(candidate));
     }
 

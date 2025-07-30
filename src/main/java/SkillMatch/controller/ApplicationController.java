@@ -2,6 +2,8 @@ package SkillMatch.controller;
 
 import SkillMatch.model.Application;
 import SkillMatch.service.ApplicationService;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,7 @@ public class ApplicationController {
     private ApplicationService service;
 
     @PostMapping
-    public ResponseEntity<Application> submit(@RequestBody Application application) {
+    public ResponseEntity<Application> submit(@Valid @RequestBody Application application) {
         Application savedApp = service.submitApplication(application);
         return ResponseEntity.ok(savedApp);
     }

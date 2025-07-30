@@ -1,6 +1,8 @@
 package SkillMatch.controller;
 import SkillMatch.model.JobPost;
 import SkillMatch.service.JobPostService;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,7 @@ public class JobPostController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addJob(@RequestBody JobPost jobPost){
+    public ResponseEntity<?> addJob(@Valid @RequestBody JobPost jobPost){
          service.addJob(jobPost);
          return ResponseEntity.ok("Job Added");
     }

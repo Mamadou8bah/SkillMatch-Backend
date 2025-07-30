@@ -5,6 +5,8 @@ import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
 import SkillMatch.exception.UserAlreadyExistException;
+import SkillMatch.model.Candidate;
+import SkillMatch.model.Employer;
 import SkillMatch.model.SecureToken;
 import SkillMatch.model.Token;
 import SkillMatch.model.User;
@@ -16,6 +18,7 @@ import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +33,8 @@ public class UserService {
     @Autowired
     UserRepo repo;
 
+    @Autowired
+    EmployerService employerService;
 
     @Autowired
     private EmailService emailService;
@@ -79,6 +84,17 @@ public class UserService {
     }
 
     public User register(RegisterRequest request, Role role) throws UserAlreadyExistException {
+       
+        if (request == null) {
+            throw new IllegalArgumentException("Registration request cannot be null");
+        }
+        if (role == null) {
+            throw new IllegalArgumentException("Role cannot be null");
+        }
+        String email = request.getEmail().trim().toLowerCase();
+        if (email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
 
         if (repo.findByEmail(request.getEmail()) != null) {
             throw new UserAlreadyExistException("User Already Exist");
@@ -93,9 +109,21 @@ public class UserService {
         user.setActive(true);
         user.setAccountVerified(false);
         User saveUser=repo.save(user);
-        sendRegistrationConfirmationEmail(saveUser);
+        if (role==Role.CANDIDATE) {
+            Candidate candidate = new Candidate();
+            candidate.setUser(saveUser);
+            candidateService.addCandidate(candidate);
+        } else if (role==Role.EMPLOYER) {
+            Employer employer = new Employer();
+            employer.setUser(saveUser);
+            employerService.addEmployer(employer);
+        }
+        try {
+            sendRegistrationConfirmationEmail(saveUser);
+        } catch (Exception e) {
+            System.err.println("Failed to send confirmation email: " + e.getMessage());
+        }
         return saveUser;
-
     }
     public LoginResponse login(LoginRequest request){
         User user=repo.findByEmail(request.getEmail());
@@ -132,10 +160,14 @@ public class UserService {
         }
         String jwt = authHeader.substring(7);
         Token token=tokenRepo.findByToken(jwt);
-        token.setExpired(true);
-        token.setRevoked(true);
-        tokenRepo.save(token);
+        if(token!= null) {
+            token.setExpired(true);
+            token.setRevoked(true);
+            tokenRepo.save(token);
+        }
     }
+
+    @Async
     public void sendRegistrationConfirmationEmail(User user){
         SecureToken secureToken=secureTokenService.createToken();
         secureToken.setUser(user);

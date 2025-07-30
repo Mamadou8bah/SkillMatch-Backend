@@ -1,15 +1,14 @@
 package SkillMatch.service;
-
-import SkillMatch.dto.CandidateDTO;
 import SkillMatch.model.Candidate;
 import SkillMatch.repository.CandidateRepo;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +16,7 @@ public class CandidateService {
     @Autowired
     private CandidateRepo repo;
 
+    @Transactional
     public List<Candidate>getCandidates(int page,int size){
         Pageable pageable= PageRequest.of(page, size);
 
@@ -25,22 +25,27 @@ public class CandidateService {
         return candidates;
     }
 
+     @Transactional
     public Candidate getCandidateByID(Long id){
         return repo.findById(id).orElseThrow(()->new RuntimeException("Candidate Not Found"));
     }
+     @Transactional
     public Candidate addCandidate(Candidate candidate){
         return repo.save(candidate);
     }
+     @Transactional
     public void deleteCandidate(Long id){
         repo.deleteById(id);
     }
-    public void UpdateCandidate(Long id,Candidate candidate){
+     @Transactional
+    public Candidate UpdateCandidate(Long id,Candidate candidate){
         Candidate update=repo.findById(id).orElseThrow(()->new RuntimeException("Not Found"));
         update.setUser(candidate.getUser());
         update.setBio(candidate.getBio());
         update.setExperiences(candidate.getExperiences());
         update.setEducationHistory(candidate.getEducationHistory());
         update.setSkills(candidate.getSkills());
+        return repo.save(update);
     }
 
 }

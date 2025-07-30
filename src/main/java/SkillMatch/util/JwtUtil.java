@@ -44,13 +44,10 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token) {
         try {
-            // First, validate the JWT token signature and expiration
             Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token);
-            
-            // Then check if token exists in database and is not revoked/expired
             Token token1=repo.findByToken(token);
             if (token1 == null) return false;
             boolean isValid=!token1.isExpired() && !token1.isRevoked();
