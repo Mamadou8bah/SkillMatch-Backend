@@ -21,6 +21,12 @@ public class JwtUtil {
     private TokenRepo repo;
 
     public JwtUtil(@Value("${jwt.secret}") String secret) {
+        if (secret == null || secret.trim().isEmpty()) {
+            throw new IllegalArgumentException("JWT secret cannot be null or empty");
+        }
+        if (secret.length() < 32) {
+            throw new IllegalArgumentException("JWT secret must be at least 32 characters long");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

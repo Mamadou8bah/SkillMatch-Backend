@@ -1,6 +1,7 @@
 package SkillMatch.service;
 
 import SkillMatch.dto.EmployerDTO;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Candidate;
 import SkillMatch.model.Employer;
 import SkillMatch.repository.EmployerRepo;
@@ -21,7 +22,7 @@ public class EmployerService {
     }
 
     public Employer getEmployerById(Long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Candidate Not Found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Employer not found"));
     }
 
     public Employer addEmployer(Employer employer){
@@ -33,7 +34,7 @@ public class EmployerService {
     }
     public Employer UpdateEmployer(Long id,Employer employer){
 
-        Employer currentData=repo.findById(id).orElseThrow(()->new RuntimeException("Employer Not Found"));
+        Employer currentData=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Employer not found"));
         currentData.setCompanyName(employer.getCompanyName());
         currentData.setDescription(employer.getDescription());
         currentData.setIndustry(employer.getIndustry());

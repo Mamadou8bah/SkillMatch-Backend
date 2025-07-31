@@ -3,7 +3,6 @@ package SkillMatch;
 import SkillMatch.model.User;
 import SkillMatch.util.Role;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 

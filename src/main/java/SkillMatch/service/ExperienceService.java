@@ -1,6 +1,7 @@
 package SkillMatch.service;
 
 import SkillMatch.dto.ExperienceDTO;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Experience;
 import SkillMatch.repository.EducationRepo;
 import SkillMatch.repository.ExperienceRepo;
@@ -31,15 +32,15 @@ public class ExperienceService {
     }
 
     public Experience getExperienceById(long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Could not find Experience"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Experience not found"));
     }   
     public Experience deleteExperience(long id){
-        Experience experience=repo.findById(id).orElseThrow(()->new RuntimeException("Could not find Experience"));
+        Experience experience=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Experience not found"));
         repo.deleteById(id);
         return experience;
     }
     public Experience updateExperience(long id, Experience newExperience){
-        Experience experience=repo.findById(id).orElseThrow(()->new RuntimeException("Could not find Experience"));
+        Experience experience=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Experience not found"));
         experience.setCandidate(newExperience.getCandidate());
         experience.setDescription(newExperience.getDescription());
         experience.setCompanyName(newExperience.getCompanyName());

@@ -2,9 +2,18 @@ package SkillMatch.service;
 
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
+import SkillMatch.dto.PasswordResetRequestDTO;
+import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
 import SkillMatch.exception.UserAlreadyExistException;
+import SkillMatch.exception.ResourceNotFoundException;
+import SkillMatch.exception.InvalidCredentialsException;
+import SkillMatch.exception.AuthenticationException;
+import SkillMatch.exception.ValidationException;
+import SkillMatch.exception.TokenExpiredException;
+import SkillMatch.exception.InvalidResetTokenException;
+import SkillMatch.exception.PasswordMismatchException;
 import SkillMatch.model.Candidate;
 import SkillMatch.model.Employer;
 import SkillMatch.model.SecureToken;
@@ -13,6 +22,7 @@ import SkillMatch.model.User;
 import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
 import SkillMatch.util.AccountVerificationEmailContext;
+import SkillMatch.util.PasswordResetEmailContext;
 import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
@@ -64,16 +74,16 @@ public class UserService {
 
 
     public User getUserById(long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("User not found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
     }
     public User deleteUser(long id){
-        User user= repo.findById(id).orElseThrow(()->new RuntimeException("User Not Found"));
+        User user= repo.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
         repo.delete(user);
         return user;
     }
 
     public User updateUser(long id,User newUser){
-        User user=repo.findById(id).orElseThrow(()->new RuntimeException("User Not found"));
+        User user=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
         user.setCandidate(newUser.getCandidate());
         user.setEmail(newUser.getEmail());
         user.setFullName(newUser.getFullName());
@@ -86,14 +96,14 @@ public class UserService {
     public User register(RegisterRequest request, Role role) throws UserAlreadyExistException {
        
         if (request == null) {
-            throw new IllegalArgumentException("Registration request cannot be null");
+            throw new ValidationException("Registration request cannot be null");
         }
         if (role == null) {
-            throw new IllegalArgumentException("Role cannot be null");
+            throw new ValidationException("Role cannot be null");
         }
         String email = request.getEmail().trim().toLowerCase();
         if (email.isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be empty");
+            throw new ValidationException("Email cannot be empty");
         }
 
         if (repo.findByEmail(request.getEmail()) != null) {
@@ -127,10 +137,14 @@ public class UserService {
     }
     public LoginResponse login(LoginRequest request){
         User user=repo.findByEmail(request.getEmail());
-        if(user==null) throw new  IllegalArgumentException("No User With that email");
+        if(user==null) throw new ResourceNotFoundException("No user with that email");
+
+        if(!user.isAccountVerified()) {
+            throw new AuthenticationException("Please verify your email before logging in");
+        }
 
         if(!encoder.matches(request.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid Credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
         String jwtToken=jwtUtil.generateToken(user.getEmail());
         Token token=new Token();
@@ -145,7 +159,7 @@ public class UserService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication==null||!authentication.isAuthenticated()){
-            throw new RuntimeException("Not Authenticated");
+            throw new AuthenticationException("Not authenticated");
         }
         String email=authentication.getName();
 
@@ -195,6 +209,79 @@ public class UserService {
         repo.save(user);
         secureTokenService.removeToken(secureToken);
         return true;
+    }
+
+    public void requestPasswordReset(String email) {
+        User user = repo.findByEmail(email);
+        if (user == null) {
+            return;
+        }
+
+        SecureToken resetToken = secureTokenService.createToken();
+        resetToken.setUser(user);
+        secureTokenService.saveToken(resetToken);
+
+        try {
+            sendPasswordResetEmail(user, resetToken.getToken());
+        } catch (Exception e) {
+            System.err.println("Failed to send password reset email: " + e.getMessage());
+        }
+    }
+
+    public boolean validateResetToken(String token) {
+        SecureToken secureToken = secureTokenService.findByToken(token);
+        return secureToken != null && secureToken.getExpiredAt().isAfter(java.time.LocalDateTime.now());
+    }
+
+    public void resetPassword(PasswordResetDTO resetDTO) {
+        if (!resetDTO.getNewPassword().equals(resetDTO.getConfirmPassword())) {
+            throw new PasswordMismatchException("Passwords do not match");
+        }
+
+        SecureToken secureToken = secureTokenService.findByToken(resetDTO.getToken());
+        if (secureToken == null) {
+            throw new InvalidResetTokenException("Invalid reset token");
+        }
+
+        if (secureToken.getExpiredAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new TokenExpiredException("Reset token has expired");
+        }
+
+        User user = secureToken.getUser();
+        user.setPassword(encoder.encode(resetDTO.getNewPassword()));
+        repo.save(user);
+
+        secureTokenService.removeToken(secureToken);
+
+        try {
+            sendPasswordResetConfirmationEmail(user);
+        } catch (Exception e) {
+            System.err.println("Failed to send password reset confirmation email: " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendPasswordResetEmail(User user, String token) {
+        PasswordResetEmailContext context = new PasswordResetEmailContext();
+        context.init(user);
+        context.setToken(token);
+        context.buildResetUrl(baseUrl, token);
+        try {
+            emailService.sendMail(context);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Async
+    public void sendPasswordResetConfirmationEmail(User user) {
+        try {
+            // For now, we'll skip the confirmation email or create a simple context
+            // TODO: Create a dedicated PasswordResetConfirmationEmailContext
+            System.out.println("Password reset successful for user: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to send password reset confirmation email: " + e.getMessage());
+        }
     }
 
 }

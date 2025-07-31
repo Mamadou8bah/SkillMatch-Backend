@@ -1,4 +1,5 @@
 package SkillMatch.service;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Candidate;
 import SkillMatch.repository.CandidateRepo;
 import jakarta.transaction.Transactional;
@@ -27,7 +28,7 @@ public class CandidateService {
 
      @Transactional
     public Candidate getCandidateByID(Long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Candidate Not Found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Candidate not found"));
     }
      @Transactional
     public Candidate addCandidate(Candidate candidate){
@@ -39,7 +40,7 @@ public class CandidateService {
     }
      @Transactional
     public Candidate UpdateCandidate(Long id,Candidate candidate){
-        Candidate update=repo.findById(id).orElseThrow(()->new RuntimeException("Not Found"));
+        Candidate update=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Candidate not found"));
         update.setUser(candidate.getUser());
         update.setBio(candidate.getBio());
         update.setExperiences(candidate.getExperiences());

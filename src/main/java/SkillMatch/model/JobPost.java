@@ -34,7 +34,6 @@ public class JobPost {
     private LocationType locationType;
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;
-
     @Column(name = "salary", nullable = false)
     private double salary;
 

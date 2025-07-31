@@ -1,5 +1,7 @@
 package SkillMatch.service;
 
+import SkillMatch.exception.DuplicateApplicationException;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Application;
 import SkillMatch.repository.ApplicationRepository;
 
@@ -23,7 +25,7 @@ public class ApplicationService {
         Optional<Application> existingApp = repository.findByCandidate_IdAndJobPost_Id(candidateId, jobId);
 
         if (existingApp.isPresent()) {
-            throw new RuntimeException("You have already applied to this job.");
+            throw new DuplicateApplicationException("You have already applied to this job");
         }
 
         return repository.save(application);
@@ -31,14 +33,14 @@ public class ApplicationService {
 
     public void deleteApplication(Long applicationId) {
         Application app = repository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         repository.delete(app);
     }
 
     public Application getApplicationById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
     }
 
 

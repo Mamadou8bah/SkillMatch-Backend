@@ -1,6 +1,7 @@
 package SkillMatch.service;
 
 import SkillMatch.dto.SkillDTO;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Skill;
 import SkillMatch.repository.SkillRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,10 @@ public class SkillService {
     }
 
     public Skill getSkillById(long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Skill not Found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Skill not found"));
     }
     public Skill deleteSkill(long id){
-        Skill skill= repo.findById(id).orElseThrow(()->new RuntimeException("Skill not Found"));
+        Skill skill= repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Skill not found"));
         repo.delete(skill);
         return skill;
     }

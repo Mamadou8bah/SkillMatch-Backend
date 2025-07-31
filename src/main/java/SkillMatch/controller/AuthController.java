@@ -3,6 +3,8 @@ package SkillMatch.controller;
 
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
+import SkillMatch.dto.PasswordResetRequestDTO;
+import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.exception.UserAlreadyExistException;
 import SkillMatch.model.User;
@@ -70,6 +72,31 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Verification failed: " + e.getMessage());
         }
+    }
+
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<String> requestPasswordReset(
+            @Valid @RequestBody PasswordResetRequestDTO request) {
+        service.requestPasswordReset(request.getEmail());
+        return ResponseEntity.ok("If your email is registered, you will receive password reset instructions");
+    }
+
+    @GetMapping("/password-reset/validate/{token}")
+    public ResponseEntity<String> validateResetToken(@PathVariable String token) {
+        boolean isValid = service.validateResetToken(token);
+        if (isValid) {
+            return ResponseEntity.ok("Reset token is valid");
+        } else {
+            return ResponseEntity.badRequest().body("Reset token is invalid or expired");
+        }
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<String> confirmPasswordReset(
+            @Valid @RequestBody PasswordResetDTO request) {
+        service.resetPassword(request);
+        return ResponseEntity.ok("Password has been reset successfully");
     }
 
 

@@ -1,6 +1,7 @@
 package SkillMatch.service;
 
 import SkillMatch.dto.EducationDTO;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Education;
 import SkillMatch.model.User;
 import SkillMatch.repository.EducationRepo;
@@ -26,7 +27,7 @@ public class EducationService {
     }
 
     public Education getEducation(long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Education Not Found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Education not found"));
     }
 
     public Education addEducation(Education education){
@@ -34,7 +35,7 @@ public class EducationService {
     }
     public Education updateEducation(long id,Education education){
         Education education1=repo.findById(id)
-                .orElseThrow(()->new RuntimeException("Education Not Found"));
+                .orElseThrow(()->new ResourceNotFoundException("Education not found"));
         education1.setEducationType(education.getEducationType());
         education1.setCandidate(education.getCandidate());
         education1.setDegree(education.getDegree());
@@ -47,7 +48,7 @@ public class EducationService {
     }
 
     public Education deleteEducation(long id){
-       Education education=repo.findById(id).orElseThrow(()->new RuntimeException("Education Not Found"));
+       Education education=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Education not found"));
        repo.delete(education);
        return education;
     }

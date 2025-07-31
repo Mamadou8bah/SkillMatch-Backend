@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Service
 public class SecureTokenService {
     private static BytesKeyGenerator DEFAULT_TOKEN_GENERATOR= KeyGenerators.secureRandom(12);
-    @Value("5")
+    @Value("${token.validity.minutes:1440}") // 24 hours default
     private int tokenValidityInMinutes;
     @Autowired
     private SecureTokenRepository repository;

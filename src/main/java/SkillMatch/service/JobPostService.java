@@ -1,7 +1,6 @@
 package SkillMatch.service;
 
-import SkillMatch.dto.JobPostDTO;
-import SkillMatch.model.Employer;
+import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.JobPost;
 import SkillMatch.repository.JobPostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,7 +30,7 @@ public class JobPostService {
     }
 
     public JobPost getJobPostById(long id){
-        return repo.findById(id).orElseThrow(()->new RuntimeException("Post Not Found"));
+        return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Job post not found"));
     }
 
     public List<JobPost> searchPosts(String title){
@@ -43,7 +41,7 @@ public class JobPostService {
     }
 
     public JobPost updateJobPost(long id, JobPost newPost){
-        JobPost oldPost=repo.findById(id).orElseThrow(()->new RuntimeException("Post not Found"));
+        JobPost oldPost=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Job post not found"));
         oldPost.setDescription(newPost.getDescription());
         oldPost.setEmployer(newPost.getEmployer());
         oldPost.setTitle(newPost.getTitle());
@@ -53,7 +51,7 @@ public class JobPostService {
     }
 
     public JobPost deletePost(long id){
-        JobPost post=repo.findById(id).orElseThrow(()->new RuntimeException("Post not found"));
+        JobPost post=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Job post not found"));
         repo.deleteById(id);
         return post;
     }
