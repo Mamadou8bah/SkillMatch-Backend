@@ -7,14 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -33,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login","/api/auth/register","/api/auth/register/verify","/","/employers",
                                 "/api/auth/password-reset/request","/api/auth/password-reset/validate/*","/api/auth/password-reset/confirm",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/media/**").permitAll()
+                                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
                         .requestMatchers("/post/add").hasAnyAuthority("EMPLOYER","ADMIN")
                         .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/user/**", "/experience/**", "/education/**", "/skill/**", 
