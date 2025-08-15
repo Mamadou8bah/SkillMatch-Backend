@@ -1,14 +1,11 @@
 package SkillMatch.service;
 
-import SkillMatch.dto.EmployerDTO;
+
 import SkillMatch.exception.ResourceNotFoundException;
-import SkillMatch.model.Candidate;
 import SkillMatch.model.Employer;
 import SkillMatch.repository.EmployerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

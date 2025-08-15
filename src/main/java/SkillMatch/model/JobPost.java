@@ -31,6 +31,7 @@ public class JobPost {
     private Employer employer;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private LocationType locationType;
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;

@@ -1,38 +1,47 @@
 package SkillMatch.controller;
 
+import SkillMatch.dto.ApiResponse;
 import SkillMatch.dto.UserDTO;
 import SkillMatch.model.User;
 import SkillMatch.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     UserService service;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public List<UserDTO> getUsers(){
-        return service.getUsers();
+    public ResponseEntity<ApiResponse<List<UserDTO>>> getUsers(){
+        List<UserDTO> users = service.getUsers();
+        return ResponseEntity.ok(ApiResponse.success("Users retrieved successfully", users));
     }
-
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable long id){
-       return service.getUserById(id);
+    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable long id){
+        User user = service.getUserById(id);
+        return ResponseEntity.ok(ApiResponse.success("User retrieved successfully", user));
     }
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public User deleteUser(@PathVariable long id) {
-        return service.deleteUser(id);
+    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable long id) {
+        service.deleteUser(id);
+        return ResponseEntity.ok(ApiResponse.success("User deleted successfully"));
     }
-
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable long id,@RequestBody User newUser){
-       return  service.updateUser(id,newUser);
+    public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable long id, @Valid @RequestBody User newUser){
+        User updatedUser = service.updateUser(id, newUser);
+        return ResponseEntity.ok(ApiResponse.success("User updated successfully", updatedUser));
     }
 }

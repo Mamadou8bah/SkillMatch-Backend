@@ -39,4 +39,10 @@ public class SkillService {
         return skill;
     }
 
+    public Skill updateSkill(long id, Skill newSkill){
+        Skill existingSkill = repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Skill not found"));
+        existingSkill.setTitle(newSkill.getTitle());
+        return repo.save(existingSkill);
+    }
+
 }

@@ -12,7 +12,7 @@ public class AccountVerificationEmailContext extends AbstractEmailContext{
         put("firstName",user.getFullName());
         setTemplateLocation("mailing/email-verification");
         setSubject("Verify Your Email");
-        setFrom("noreply@skillmatch.com"); // Use a proper no-reply email
+        setFrom("mbah18791@gmail.com"); 
         setTo(user.getEmail());
     }
 

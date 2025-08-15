@@ -1,6 +1,6 @@
 package SkillMatch.controller;
 
-
+import SkillMatch.dto.ApiResponse;
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.PasswordResetRequestDTO;
@@ -36,67 +36,64 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?>register(@Valid @RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
+    public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
         User registeredUser = service.register(request, role);
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(ApiResponse.success("User registered successfully. Please check your email for verification.", registeredUser));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?>login(@Valid @RequestBody LoginRequest request){
-        LoginResponse response=service.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request){
+        LoginResponse response = service.login(request);
+        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
-
 
     @GetMapping("/me")
-    public ResponseEntity<?>getCurrentUser(){
-        User user= service.getLogInUser();
-        return ResponseEntity.ok(user);
+    public ResponseEntity<ApiResponse<User>> getCurrentUser(){
+        User user = service.getLogInUser();
+        return ResponseEntity.ok(ApiResponse.success("Current user retrieved successfully", user));
     }
+    
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
         service.logout(request.getHeader("Authorization"));
         SecurityContextHolder.clearContext();
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully"));
     }
 
     @GetMapping("/register/verify")
-    public ResponseEntity<?> verifyAccount(@RequestParam String token) {
+    public ResponseEntity<ApiResponse<String>> verifyAccount(@RequestParam String token) {
         try {
             boolean isVerified = service.verifyAccount(token);
             if (isVerified) {
-                return ResponseEntity.ok("Account verified successfully! You can now log in.");
+                return ResponseEntity.ok(ApiResponse.success("Account verified successfully! You can now log in."));
             } else {
-                return ResponseEntity.badRequest().body("Invalid or expired verification token.");
+                return ResponseEntity.badRequest().body(ApiResponse.error("Invalid or expired verification token."));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Verification failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error("Verification failed: " + e.getMessage()));
         }
     }
 
-
     @PostMapping("/password-reset/request")
-    public ResponseEntity<String> requestPasswordReset(
-            @Valid @RequestBody PasswordResetRequestDTO request) {
+    public ResponseEntity<ApiResponse<String>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO request) {
         service.requestPasswordReset(request.getEmail());
-        return ResponseEntity.ok("If your email is registered, you will receive password reset instructions");
+        return ResponseEntity.ok(ApiResponse.success("If your email is registered, you will receive password reset instructions"));
     }
 
     @GetMapping("/password-reset/validate/{token}")
-    public ResponseEntity<String> validateResetToken(@PathVariable String token) {
+    public ResponseEntity<ApiResponse<String>> validateResetToken(@PathVariable String token) {
         boolean isValid = service.validateResetToken(token);
         if (isValid) {
-            return ResponseEntity.ok("Reset token is valid");
+            return ResponseEntity.ok(ApiResponse.success("Reset token is valid"));
         } else {
-            return ResponseEntity.badRequest().body("Reset token is invalid or expired");
+            return ResponseEntity.badRequest().body(ApiResponse.error("Reset token is invalid or expired"));
         }
     }
 
     @PostMapping("/password-reset/confirm")
-    public ResponseEntity<String> confirmPasswordReset(
-            @Valid @RequestBody PasswordResetDTO request) {
+    public ResponseEntity<ApiResponse<String>> confirmPasswordReset(@Valid @RequestBody PasswordResetDTO request) {
         service.resetPassword(request);
-        return ResponseEntity.ok("Password has been reset successfully");
+        return ResponseEntity.ok(ApiResponse.success("Password has been reset successfully"));
     }
 
 

@@ -1,7 +1,6 @@
 package SkillMatch.repository;
 
 import SkillMatch.model.Application;
-import SkillMatch.model.Candidate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

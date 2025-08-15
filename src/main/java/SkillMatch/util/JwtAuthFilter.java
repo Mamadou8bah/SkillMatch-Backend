@@ -34,7 +34,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 jwt=authHeader.substring(7).trim();
                 username=jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                username = null;
+                jwt = null;
             }
         }
 

@@ -3,7 +3,6 @@ package SkillMatch.service;
 import SkillMatch.dto.EducationDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Education;
-import SkillMatch.model.User;
 import SkillMatch.repository.EducationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,6 @@ package SkillMatch.service;
 import SkillMatch.dto.ExperienceDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Experience;
-import SkillMatch.repository.EducationRepo;
 import SkillMatch.repository.ExperienceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

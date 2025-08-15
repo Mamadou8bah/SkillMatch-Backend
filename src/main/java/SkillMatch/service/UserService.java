@@ -2,7 +2,6 @@ package SkillMatch.service;
 
 import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
-import SkillMatch.dto.PasswordResetRequestDTO;
 import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.dto.UserDTO;
@@ -23,6 +22,7 @@ import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
 import SkillMatch.util.AccountVerificationEmailContext;
 import SkillMatch.util.PasswordResetEmailContext;
+import SkillMatch.util.PasswordResetConfirmationEmailContext;
 import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
@@ -88,6 +88,7 @@ public class UserService {
         user.setEmail(newUser.getEmail());
         user.setFullName(newUser.getFullName());
         user.setPassword(newUser.getPassword());
+        user.setLocation(newUser.getLocation());
 
         repo.save(user);
         return  user;
@@ -275,12 +276,12 @@ public class UserService {
 
     @Async
     public void sendPasswordResetConfirmationEmail(User user) {
+        PasswordResetConfirmationEmailContext context = new PasswordResetConfirmationEmailContext();
+        context.init(user);
         try {
-            // For now, we'll skip the confirmation email or create a simple context
-            // TODO: Create a dedicated PasswordResetConfirmationEmailContext
-            System.out.println("Password reset successful for user: " + user.getEmail());
-        } catch (Exception e) {
-            System.err.println("Failed to send password reset confirmation email: " + e.getMessage());
+            emailService.sendMail(context);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send password reset confirmation email", e);
         }
     }
 
