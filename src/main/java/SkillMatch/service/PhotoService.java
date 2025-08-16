@@ -37,22 +37,12 @@ public class PhotoService {
         }
     }
 
-    public ResponseEntity<?>deleteCandidatePhoto(Candidate candidate){
-        Photo photo=photoRepository.findByCandidate(candidate);
-        if(photo!=null){
-            photoRepository.delete(photo);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
-    public ResponseEntity<?>deleteEmployerPhoto(Employer employer){
-        Photo photo=photoRepository.findByEmployer(employer);
-        if(photo!=null){
-            photoRepository.delete(photo);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+   public ResponseEntity<?> deletePhoto(Photo photo)throws IOException {
+        cloudinaryService.deleteImage(photo.getPublicId());
+        photoRepository.delete(photo);
+        return ResponseEntity.ok().build();
+   }
+
     public ResponseEntity<?>updatePhoto(String url,MultipartFile file) throws IOException {
         Photo photo=photoRepository.findByUrl(url);
         if(photo!=null){
