@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class CandidateService {
@@ -73,6 +72,11 @@ public class CandidateService {
     }
     public ResponseEntity<?>deletePhoto(Photo photo)throws IOException{
         photoService.deletePhoto(photo);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?>changeProfilePhoto(Photo photo,MultipartFile newPhoto)throws IOException{
+        photoService.updatePhoto(photo.getUrl(),newPhoto);
         return ResponseEntity.ok().build();
     }
 
