@@ -1,7 +1,5 @@
 package SkillMatch.service;
 
-import SkillMatch.model.Candidate;
-import SkillMatch.model.Employer;
 import SkillMatch.model.Photo;
 import SkillMatch.repository.PhotoRepository;
 import java.io.IOException;

@@ -13,11 +13,8 @@ import SkillMatch.exception.ValidationException;
 import SkillMatch.exception.TokenExpiredException;
 import SkillMatch.exception.InvalidResetTokenException;
 import SkillMatch.exception.PasswordMismatchException;
-import SkillMatch.model.Candidate;
-import SkillMatch.model.Employer;
-import SkillMatch.model.SecureToken;
-import SkillMatch.model.Token;
-import SkillMatch.model.User;
+import SkillMatch.model.*;
+import SkillMatch.repository.PhotoRepository;
 import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
 import SkillMatch.util.AccountVerificationEmailContext;
@@ -28,12 +25,15 @@ import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +61,13 @@ public class UserService {
 
     @Value("${site.base.url}")
     private String baseUrl;
+
+    @Autowired
+    private PhotoService photoService;
+
+    @Autowired
+    private PhotoRepository photoRepository;
+
     @Autowired
     CandidateService candidateService;
     public List<UserDTO>getUsers(){
@@ -114,7 +121,6 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setProfilePicture(request.getProfilePicture());
         user.setLocation(request.getLocation());
         user.setRole(role);
         user.setActive(true);
@@ -283,6 +289,28 @@ public class UserService {
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send password reset confirmation email", e);
         }
+    }
+
+
+    public ResponseEntity<?> uploadPhoto(MultipartFile file, User user) throws IOException {
+        try {
+            Photo photo=photoService.createPhoto(file);
+            photo.setUser(user);
+            photoRepository.save(photo);
+            return ResponseEntity.ok().body("Image uploaded successfully");
+
+        }catch (IOException  e){
+            throw new IOException("Could not upload photo"+e.getMessage());
+        }
+    }
+    public ResponseEntity<?>deletePhoto(Photo photo)throws IOException{
+        photoService.deletePhoto(photo);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?>changeProfilePhoto(Photo photo,MultipartFile newPhoto)throws IOException{
+        photoService.updatePhoto(photo.getUrl(),newPhoto);
+        return ResponseEntity.ok().build();
     }
 
 }

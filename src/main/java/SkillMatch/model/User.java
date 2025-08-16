@@ -29,8 +29,9 @@ public class User implements UserDetails {
     @Column(nullable = false,length = 100)
     private String fullName;
 
-    @Column(nullable = true) 
-    private String profilePicture;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user")
+    private Photo photo;
 
     @Column(unique = true,nullable = false)
     private String email;

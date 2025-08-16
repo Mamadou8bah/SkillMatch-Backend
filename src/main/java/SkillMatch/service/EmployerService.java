@@ -52,24 +52,4 @@ public class EmployerService {
 
     }
 
-    public ResponseEntity<?>uploadPhoto(MultipartFile file, Employer employer) throws IOException {
-        try {
-            Photo photo=photoService.createPhoto(file);
-            photo.setEmployer(employer);
-            photoRepository.save(photo);
-            return ResponseEntity.ok().body("Image uploaded successfully");
-
-        }catch (IOException  e){
-            throw new IOException("Could not upload photo"+e.getMessage());
-        }
-    }
-    public ResponseEntity<?> deletePhoto(Photo photo)throws IOException{
-        photoService.deletePhoto(photo);
-        return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity<?>changeProfilePhoto(Photo photo, MultipartFile newPhoto)throws IOException{
-        photoService.updatePhoto(photo.getUrl(),newPhoto);
-        return ResponseEntity.ok().build();
-    }
 }

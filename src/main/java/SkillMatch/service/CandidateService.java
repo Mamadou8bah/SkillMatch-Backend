@@ -21,11 +21,6 @@ public class CandidateService {
     @Autowired
     private CandidateRepo repo;
 
-    @Autowired
-    private PhotoService photoService;
-
-    @Autowired
-    private PhotoRepository photoRepository;
 
     @Transactional
     public List<Candidate>getCandidates(int page,int size){
@@ -57,27 +52,6 @@ public class CandidateService {
         update.setEducationHistory(candidate.getEducationHistory());
         update.setSkills(candidate.getSkills());
         return repo.save(update);
-    }
-
-    public ResponseEntity<?>uploadPhoto(MultipartFile file,Candidate candidate) throws IOException {
-        try {
-            Photo photo=photoService.createPhoto(file);
-            photo.setCandidate( candidate );
-            photoRepository.save(photo);
-            return ResponseEntity.ok().body("Image uploaded successfully");
-
-        }catch (IOException  e){
-            throw new IOException("Could not upload photo"+e.getMessage());
-        }
-    }
-    public ResponseEntity<?>deletePhoto(Photo photo)throws IOException{
-        photoService.deletePhoto(photo);
-        return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity<?>changeProfilePhoto(Photo photo,MultipartFile newPhoto)throws IOException{
-        photoService.updatePhoto(photo.getUrl(),newPhoto);
-        return ResponseEntity.ok().build();
     }
 
 }

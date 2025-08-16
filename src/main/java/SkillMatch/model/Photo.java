@@ -22,12 +22,8 @@ public class Photo {
     @NotNull(message = "Photo must have a public id")
     private String publicId;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "candidate_id")
-    private Candidate candidate;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employer_id")
-    private Employer employer;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

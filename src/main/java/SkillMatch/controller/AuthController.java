@@ -28,12 +28,6 @@ public class AuthController {
     @Autowired
     UserService service;
 
-    @Autowired
-    EmployerService employerService;
-
-    @Autowired
-    CandidateService candidateService;
-
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
