@@ -152,12 +152,12 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Cloudinary HTTP adapter -->
 		<dependency>
 			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http5</artifactId>
-			<version>2.3.2</version>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.33.0</version>
 		</dependency>
+
 
 
 	</dependencies>
