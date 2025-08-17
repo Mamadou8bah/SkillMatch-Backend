@@ -23,6 +23,7 @@ import SkillMatch.util.PasswordResetConfirmationEmailContext;
 import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +103,7 @@ public class UserService {
         return  user;
     }
 
+    @Transactional
     public User register(RegisterRequest request, Role role) throws UserAlreadyExistException {
        
         if (request == null) {
@@ -113,9 +116,11 @@ public class UserService {
         if (email.isEmpty()) {
             throw new ValidationException("Email cannot be empty");
         }
+        User existingUser = repo.findByEmail(email);
 
-        if (repo.findByEmail(request.getEmail()) != null) {
-            throw new UserAlreadyExistException("User Already Exist");
+        if (existingUser != null) {
+            sendRegistrationConfirmationEmail(existingUser);
+            throw new UserAlreadyExistException("User Already Exist, Please Verify your Email if you have not done sure");
         }
         User user = new User();
         user.setFullName(request.getFullName());
@@ -190,6 +195,12 @@ public class UserService {
 
     @Async
     public void sendRegistrationConfirmationEmail(User user){
+
+        List<SecureToken> secureTokens = user.getSecureTokens();
+        for (SecureToken oldToken : secureTokens) {
+            oldToken.setExpiredAt(LocalDateTime.now());
+            secureTokenService.saveToken(oldToken);
+        }
         SecureToken secureToken=secureTokenService.createToken();
         secureToken.setUser(user);
         secureTokenService.saveToken(secureToken);

@@ -29,14 +29,13 @@ public class User implements UserDetails {
     @Column(nullable = false,length = 100)
     private String fullName;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
     private Photo photo;
 
     @Column(unique = true,nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String location;
 
     @Column(nullable = false)

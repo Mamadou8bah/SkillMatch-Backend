@@ -29,15 +29,29 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login","/api/auth/register","/api/auth/register/verify","/","/employers",
-                                "/api/auth/password-reset/request","/api/auth/password-reset/validate/*","/api/auth/password-reset/confirm",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
-                        .requestMatchers("/post/add").hasAnyAuthority("EMPLOYER","ADMIN")
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/register/verify",
+                                "/",
+                                "/employers",
+                                "/api/auth/password-reset/request",
+                                "/api/auth/password-reset/validate/*",
+                                "/api/auth/password-reset/confirm",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health",
+                                "/api/auth/register/**",
+                                "api/auth/register/verify/**",
+                                "register/verify/**"
+                        ).permitAll()
+                        .requestMatchers("/post/add").hasAnyRole("EMPLOYER", "ADMIN")
                         .requestMatchers("/api/auth/me").authenticated()
-                        .requestMatchers("/user/**", "/experience/**", "/education/**", "/skill/**", 
+                        .requestMatchers("/user/**", "/experience/**", "/education/**", "/skill/**",
                                 "/candidates/**", "/post/**", "/api/apply/**").authenticated()
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider)
