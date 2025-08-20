@@ -2,29 +2,23 @@ package SkillMatch.service;
 
 
 import SkillMatch.exception.ResourceNotFoundException;
-import SkillMatch.model.Candidate;
 import SkillMatch.model.Employer;
-import SkillMatch.model.Photo;
 import SkillMatch.repository.EmployerRepo;
 import SkillMatch.repository.PhotoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-import java.io.*;
 
 @Service
+@RequiredArgsConstructor
 public class EmployerService {
-    @Autowired
-    private EmployerRepo repo;
 
-    @Autowired
-    private PhotoService photoService;
+    private final EmployerRepo repo;
 
-    @Autowired
-    private PhotoRepository photoRepository;
+    private final PhotoService photoService;
+
+    private final PhotoRepository photoRepository;
 
     public List<Employer> getEmployers(){
        List<Employer>employers=repo.findAll();

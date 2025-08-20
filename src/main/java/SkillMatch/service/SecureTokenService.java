@@ -2,6 +2,7 @@ package SkillMatch.service;
 
 import SkillMatch.model.SecureToken;
 import SkillMatch.repository.SecureTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class SecureTokenService {
     private static BytesKeyGenerator DEFAULT_TOKEN_GENERATOR= KeyGenerators.secureRandom(12);
-    @Value("${token.validity.minutes:1440}") // 24 hours default
+    @Value("${token.validity.minutes:1440}")
     private int tokenValidityInMinutes;
-    @Autowired
-    private SecureTokenRepository repository;
+
+    private final SecureTokenRepository repository;
 
     public SecureToken saveToken(SecureToken token){
         return repository.save(token);

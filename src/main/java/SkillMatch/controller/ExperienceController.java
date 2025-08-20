@@ -5,6 +5,7 @@ import SkillMatch.dto.ExperienceDTO;
 import SkillMatch.model.Experience;
 import SkillMatch.service.ExperienceService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/experience")
+@RequiredArgsConstructor
 public class ExperienceController {
 
-    @Autowired
-    ExperienceService service;
+
+    private final ExperienceService service;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ExperienceDTO>>> getExperiences(){

@@ -5,6 +5,7 @@ import SkillMatch.dto.EducationDTO;
 import SkillMatch.model.Education;
 import SkillMatch.service.EducationService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/education")
+@RequiredArgsConstructor
 public class EducationController {
-    @Autowired
-    EducationService service;
+
+    private final EducationService service;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<EducationDTO>>> getEducation(){

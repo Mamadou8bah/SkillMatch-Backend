@@ -24,6 +24,7 @@ import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -40,38 +41,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    UserRepo repo;
 
-    @Autowired
-    EmployerService employerService;
+    private final UserRepo repo;
 
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    BCryptPasswordEncoder encoder;
 
-    @Autowired
-    JwtUtil jwtUtil;
+    private final EmployerService employerService;
 
-    @Autowired
-    private SecureTokenService secureTokenService;
-    @Autowired
-    TokenRepo tokenRepo;
+
+    private final EmailService emailService;
+
+    private final BCryptPasswordEncoder encoder;
+
+
+    private final JwtUtil jwtUtil;
+
+
+    private final SecureTokenService secureTokenService;
+
+    private final TokenRepo tokenRepo;
 
     @Value("${site.base.url}")
     private String baseUrl;
 
-    @Autowired
-    private PhotoService photoService;
 
-    @Autowired
-    private PhotoRepository photoRepository;
+    private final PhotoService photoService;
 
-    @Autowired
-    CandidateService candidateService;
+
+    private final PhotoRepository photoRepository;
+
+
+    private final CandidateService candidateService;
     public List<UserDTO>getUsers(){
         List<User> users= repo.findAll();
         List<UserDTO> userDTOS=new ArrayList<>();

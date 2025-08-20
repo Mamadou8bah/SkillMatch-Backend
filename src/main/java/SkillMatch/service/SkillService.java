@@ -4,6 +4,7 @@ import SkillMatch.dto.SkillDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Skill;
 import SkillMatch.repository.SkillRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,11 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class SkillService {
 
-    @Autowired
-    SkillRepo repo;
+
+    private final SkillRepo repo;
     public Skill addSkill(Skill skill){
         return repo.save(skill);
     }

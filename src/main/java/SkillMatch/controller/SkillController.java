@@ -5,6 +5,7 @@ import SkillMatch.dto.SkillDTO;
 import SkillMatch.model.Skill;
 import SkillMatch.service.SkillService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/skill")
+@RequiredArgsConstructor
 public class SkillController {
 
-    @Autowired
-    SkillService service;
+
+    private final SkillService service;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Skill>> addSkill(@Valid @RequestBody Skill skill){

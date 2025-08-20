@@ -2,6 +2,7 @@ package SkillMatch.controller;
 
 import SkillMatch.model.Employer;
 import SkillMatch.service.EmployerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,10 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/employers")
+@RequiredArgsConstructor
 public class EmployerController {
 
-    @Autowired
-    public EmployerService service;
+
+    private final EmployerService service;
 
     @GetMapping
     public ResponseEntity<?>getEmployers(){

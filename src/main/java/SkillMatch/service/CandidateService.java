@@ -6,6 +6,8 @@ import SkillMatch.repository.CandidateRepo;
 import SkillMatch.repository.PhotoRepository;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CandidateService {
-    @Autowired
-    private CandidateRepo repo;
+
+    private final CandidateRepo repo;
 
 
     @Transactional

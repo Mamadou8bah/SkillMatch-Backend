@@ -3,6 +3,8 @@ package SkillMatch.service;
 import SkillMatch.model.Photo;
 import SkillMatch.repository.PhotoRepository;
 import java.io.IOException;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class PhotoService {
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
-    @Autowired
-    private PhotoRepository photoRepository;
+    private final CloudinaryService cloudinaryService;
+
+
+    private final PhotoRepository photoRepository;
 
     public Photo createPhoto(MultipartFile photoFile)throws IOException {
 

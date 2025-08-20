@@ -4,6 +4,7 @@ import SkillMatch.dto.ExperienceDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Experience;
 import SkillMatch.repository.ExperienceRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ExperienceService {
-    @Autowired
-    ExperienceRepo repo;
+
+    private final ExperienceRepo repo;
 
     public List<ExperienceDTO> getExperiences(){
         List<Experience>experienceList=repo.findAll();

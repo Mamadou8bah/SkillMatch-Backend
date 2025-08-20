@@ -3,6 +3,7 @@ package SkillMatch.service;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.JobPost;
 import SkillMatch.repository.JobPostRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class JobPostService {
 
-    @Autowired
-    JobPostRepo repo;
+
+    private final JobPostRepo repo;
 
     public JobPost addJob(JobPost jobPost){
         return repo.save(jobPost);

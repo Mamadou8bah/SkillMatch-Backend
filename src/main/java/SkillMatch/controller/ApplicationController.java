@@ -4,16 +4,18 @@ import SkillMatch.model.Application;
 import SkillMatch.service.ApplicationService;
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/apply")
+@RequiredArgsConstructor
 public class ApplicationController {
 
-    @Autowired
-    private ApplicationService service;
+
+    private final ApplicationService service;
 
     @PostMapping
     public ResponseEntity<Application> submit(@Valid @RequestBody Application application) {

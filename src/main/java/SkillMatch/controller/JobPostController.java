@@ -3,6 +3,7 @@ import SkillMatch.model.JobPost;
 import SkillMatch.service.JobPostService;
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/post")
+@RequiredArgsConstructor
 public class JobPostController {
 
-    @Autowired
-    JobPostService service;
+
+    private final JobPostService service;
 
     @GetMapping
     public ResponseEntity<?> getJobPost(@RequestParam(defaultValue = "0") int page,

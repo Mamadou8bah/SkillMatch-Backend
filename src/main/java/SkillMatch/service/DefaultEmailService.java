@@ -3,6 +3,7 @@ package SkillMatch.service;
 import SkillMatch.util.AbstractEmailContext;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,11 +14,12 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.nio.charset.StandardCharsets;
 
 @Service
+@RequiredArgsConstructor
 public class DefaultEmailService implements EmailService{
-    @Autowired
-    private JavaMailSender emailSender;
-    @Autowired
-    private SpringTemplateEngine templateEngine;
+
+    private final JavaMailSender emailSender;
+
+    private final SpringTemplateEngine templateEngine;
     @Override
     public void sendMail(AbstractEmailContext email) throws MessagingException {
         MimeMessage mimeMessage=emailSender.createMimeMessage();

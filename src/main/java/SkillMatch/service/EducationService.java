@@ -4,6 +4,7 @@ import SkillMatch.dto.EducationDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Education;
 import SkillMatch.repository.EducationRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class EducationService {
 
-    @Autowired
-    EducationRepo repo;
+
+    private  final EducationRepo repo;
     public List<EducationDTO>getEducation(){
         List<Education>educations=repo.findAll();
         List<EducationDTO>educationDTOList=new ArrayList<>();

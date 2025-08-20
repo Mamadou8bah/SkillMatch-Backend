@@ -6,16 +6,18 @@ import SkillMatch.model.Application;
 import SkillMatch.repository.ApplicationRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ApplicationService {
 
-    @Autowired
-    private ApplicationRepository repository;
+
+    private final ApplicationRepository repository;
 
     @Transactional
     public Application submitApplication(Application application) {
