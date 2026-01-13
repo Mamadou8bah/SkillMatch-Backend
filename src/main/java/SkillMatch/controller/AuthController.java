@@ -33,7 +33,7 @@ public class AuthController {
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
-        User registeredUser = service.register(request, role);
+        User registeredUser = service.register(request);
         return ResponseEntity.ok(ApiResponse.success("User registered successfully. Please check your email for verification.", registeredUser));
     }
 

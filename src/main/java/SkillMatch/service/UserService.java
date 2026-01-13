@@ -106,15 +106,12 @@ public class UserService {
     }
 
     @Transactional
-    public User register(RegisterRequest request, Role role) throws UserAlreadyExistException {
+    public User register(RegisterRequest request) throws UserAlreadyExistException {
        
         if (request == null) {
             throw new ValidationException("Registration request cannot be null");
         }
-        if (role == null) {
-            throw new ValidationException("Role cannot be null");
-        }
-        String email = request.getEmail().trim().toLowerCase();
+        String email = request.email().trim().toLowerCase();
         if (email.isEmpty()) {
             throw new ValidationException("Email cannot be empty");
         }
@@ -125,23 +122,14 @@ public class UserService {
             throw new UserAlreadyExistException("User Already Exist, Please Verify your Email if you have not done sure");
         }
         User user = new User();
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPassword(encoder.encode(request.getPassword()));
-        user.setLocation(request.getLocation());
-        user.setRole(role);
+        user.setFullName(request.fullName());
+        user.setEmail(request.email());
+        user.setPassword(encoder.encode(request.password()));
+        user.setLocation(request.location());
+        user.setRole(Role.CANDIDATE);
         user.setActive(true);
         user.setAccountVerified(false);
         User saveUser=repo.save(user);
-        if (role==Role.CANDIDATE) {
-            Candidate candidate = new Candidate();
-            candidate.setUser(saveUser);
-            candidateService.addCandidate(candidate);
-        } else if (role==Role.EMPLOYER) {
-            Employer employer = new Employer();
-            employer.setUser(saveUser);
-            employerService.addEmployer(employer);
-        }
         try {
             sendRegistrationConfirmationEmail(saveUser);
         } catch (Exception e) {
