@@ -21,7 +21,6 @@ public class ApplicationService {
 
     @Transactional
     public Application submitApplication(Application application) {
-        Long candidateId = application.getCandidate().getId();
         Long jobId = application.getJobPost().getId();
 
         Optional<Application> existingApp = repository.findByCandidate_IdAndJobPost_Id(candidateId, jobId);

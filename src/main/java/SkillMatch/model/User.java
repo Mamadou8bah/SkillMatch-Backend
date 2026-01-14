@@ -49,9 +49,6 @@ public class User implements UserDetails {
     private LocalDateTime createdAt=LocalDateTime.now();
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Candidate candidate;
-
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Employer employer;
 
     @OneToMany(mappedBy = "user")

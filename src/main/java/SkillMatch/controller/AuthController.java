@@ -8,16 +8,12 @@ import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
 import SkillMatch.exception.UserAlreadyExistException;
 import SkillMatch.model.User;
-import SkillMatch.service.CandidateService;
-import SkillMatch.service.EmployerService;
 import SkillMatch.service.UserService;
-import SkillMatch.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +28,7 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request, @RequestParam Role role)throws UserAlreadyExistException {
+    public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request)throws UserAlreadyExistException {
         User registeredUser = service.register(request);
         return ResponseEntity.ok(ApiResponse.success("User registered successfully. Please check your email for verification.", registeredUser));
     }

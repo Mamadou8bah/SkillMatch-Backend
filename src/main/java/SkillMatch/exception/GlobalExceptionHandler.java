@@ -1,133 +1,82 @@
 package SkillMatch.exception;
 
 import SkillMatch.dto.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ResponseEntity<ApiResponse<Object>> error(String message, HttpStatus status) {
+        return ResponseEntity.status(status).body(ApiResponse.error(message));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse<Object>> notFound(ResourceNotFoundException ex) {
+        return error(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUserAlreadyExistException(UserAlreadyExistException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    @ExceptionHandler({
+            UserAlreadyExistException.class,
+            DuplicateApplicationException.class
+    })
+    public ResponseEntity<ApiResponse<Object>> conflict(RuntimeException ex) {
+        return error(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiResponse<Object>> handleInvalidCredentialsException(InvalidCredentialsException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler({
+            InvalidCredentialsException.class,
+            AuthenticationException.class,
+            InvalidTokenException.class,
+            TokenExpiredException.class
+    })
+    public ResponseEntity<ApiResponse<Object>> unauthorized(RuntimeException ex) {
+        return error(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationException(ValidationException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<ApiResponse<Object>> handleTokenExpiredException(TokenExpiredException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<ApiResponse<Object>> handleInvalidTokenException(InvalidTokenException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(InvalidResetTokenException.class)
-    public ResponseEntity<ApiResponse<Object>> handleInvalidResetTokenException(InvalidResetTokenException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(PasswordMismatchException.class)
-    public ResponseEntity<ApiResponse<Object>> handlePasswordMismatchException(PasswordMismatchException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(DuplicateApplicationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleDuplicateApplicationException(DuplicateApplicationException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UnknownIdentifierException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUnknownIdentifierException(UnknownIdentifierException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler({
+            ValidationException.class,
+            PasswordMismatchException.class,
+            InvalidResetTokenException.class,
+            UnknownIdentifierException.class,
+            IllegalArgumentException.class
+    })
+    public ResponseEntity<ApiResponse<Object>> badRequest(RuntimeException ex) {
+        return error(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Object>> dtoValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        
-        ApiResponse<Object> response = new ApiResponse<>(false, "Validation failed", errors, LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ex.getBindingResult().getFieldErrors()
+                .forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+
+        return ResponseEntity.badRequest().body(
+                new ApiResponse<>(false, "Validation failed", errors, LocalDateTime.now())
+        );
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Object>> paramValidation(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
-        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
-        
-        for (ConstraintViolation<?> violation : violations) {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
-            errors.put(fieldName, errorMessage);
-        }
-        
-        ApiResponse<Object> response = new ApiResponse<>(false, "Validation failed", errors, LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
+        ex.getConstraintViolations()
+                .forEach(v -> errors.put(v.getPropertyPath().toString(), v.getMessage()));
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error("An unexpected error occurred: " + ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.badRequest().body(
+                new ApiResponse<>(false, "Validation failed", errors, LocalDateTime.now())
+        );
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex, WebRequest request) {
-        ApiResponse<Object> response = ApiResponse.error("An internal server error occurred");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse<Object>> internalError(Exception ex) {
+        return error("An internal server error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

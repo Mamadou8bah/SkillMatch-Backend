@@ -22,8 +22,11 @@ import SkillMatch.util.PasswordResetEmailContext;
 import SkillMatch.util.PasswordResetConfirmationEmailContext;
 import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
+import SkillMatch.validator.ObjectValidator;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +42,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +77,9 @@ public class UserService {
     private final PhotoRepository photoRepository;
 
 
-    private final CandidateService candidateService;
+    private final ObjectValidator<RegisterRequest> userValidator;
+
+
     public List<UserDTO>getUsers(){
         List<User> users= repo.findAll();
         List<UserDTO> userDTOS=new ArrayList<>();
@@ -95,7 +101,7 @@ public class UserService {
 
     public User updateUser(long id,User newUser){
         User user=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
-        user.setCandidate(newUser.getCandidate());
+
         user.setEmail(newUser.getEmail());
         user.setFullName(newUser.getFullName());
         user.setPassword(newUser.getPassword());
@@ -106,8 +112,7 @@ public class UserService {
     }
 
     @Transactional
-    public User register(RegisterRequest request) throws UserAlreadyExistException {
-       
+    public User register(RegisterRequest request) throws UserAlreadyExistException, ConstraintViolationException {
         if (request == null) {
             throw new ValidationException("Registration request cannot be null");
         }

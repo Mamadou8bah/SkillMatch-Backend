@@ -24,11 +24,6 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "candidate_id", referencedColumnName = "id", nullable = false)
-    private Candidate candidate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_post_id", referencedColumnName = "id", nullable = false)
     private JobPost jobPost;
