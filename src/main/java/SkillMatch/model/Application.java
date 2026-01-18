@@ -28,6 +28,8 @@ public class Application {
     @JoinColumn(name = "job_post_id", referencedColumnName = "id", nullable = false)
     private JobPost jobPost;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @Column(nullable = false)
     private String status = "Pending";
