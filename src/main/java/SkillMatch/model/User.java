@@ -65,6 +65,15 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Application> applications;
 
+    @OneToMany(mappedBy = "user")
+    private List<Education> educations;
+
+    @OneToMany(mappedBy = "user")
+    private List<Experience> experiences;
+
+    @OneToMany(mappedBy = "user")
+    private List<Skill> skills;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();

@@ -37,9 +37,9 @@ public class Experience {
     @Column(nullable = true)
     private LocalDate endDate;
     
-    @ManyToOne
-    @JoinColumn(name = "candidate_id")
-    private Candidate candidate;
+   @ManyToOne
+   @JoinColumn(name = "user_id")
+   private User user;
 
 
 }

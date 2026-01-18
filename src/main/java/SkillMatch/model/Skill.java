@@ -18,9 +18,11 @@ public class Skill {
     private Long id;
     @Column(nullable = false)
     private String title;
+
+
     @ManyToOne
-    @JoinColumn(name = "candidate_id")
-    private Candidate candidate;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "job_post_id")

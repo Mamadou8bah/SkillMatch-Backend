@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -39,7 +40,7 @@ public class JobPost {
     private double salary;
 
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL)
-    private List<Application> applications;
+    private Set<Application> applications;
 
     @Column(nullable = false,updatable = false)
     @CreatedDate

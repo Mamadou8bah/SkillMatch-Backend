@@ -24,9 +24,10 @@ public class Education {
     private int yearCompleted;
     @Enumerated(EnumType.STRING)
     private EducationType educationType;
+
     @ManyToOne
-    @JoinColumn(name = "candidate_id")
-    private Candidate candidate;
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 }

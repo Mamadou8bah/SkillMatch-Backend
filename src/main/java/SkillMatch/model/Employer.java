@@ -29,7 +29,7 @@ public class Employer {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    private String picture;
+    private String pictureUrl;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
