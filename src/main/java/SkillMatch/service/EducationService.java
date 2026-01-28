@@ -1,11 +1,15 @@
 package SkillMatch.service;
 
 import SkillMatch.dto.EducationDTO;
+import SkillMatch.exception.AuthenticationException;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Education;
+import SkillMatch.model.User;
 import SkillMatch.repository.EducationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +26,7 @@ public class EducationService {
         List<EducationDTO>educationDTOList=new ArrayList<>();
 
         for(Education education:educations){
-            educationDTOList.add(new EducationDTO(education.getDegree(),education.getEducationType()));
+            educationDTOList.add(new EducationDTO(education.getDegree(), education.getEducationType(), education.getInstitutionName(), education.getYearCompleted(), education.getYearStarted()));
         }
         return educationDTOList;
     }
@@ -31,21 +35,42 @@ public class EducationService {
         return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Education not found"));
     }
 
-    public Education addEducation(Education education){
+    public Education addEducation(EducationDTO educationDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            throw new AuthenticationException("Not logged in");
+        }
+        Education education = Education.builder().
+                user(user)
+                .educationType(educationDTO.getEducationType())
+                .degree(educationDTO.getDegree())
+                .institutionName(educationDTO.getInstitutionName())
+                .yearStarted(educationDTO.getYearStart())
+                .yearCompleted(educationDTO.getYearEnd())
+                .build();
         return repo.save(education);
     }
-    public Education updateEducation(long id,Education education){
+
+    public Education updateEducation(long id, EducationDTO education) {
         Education education1=repo.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Education not found"));
-        education1.setEducationType(education.getEducationType());
-        education1.setCandidate(education.getCandidate());
-        education1.setDegree(education.getDegree());
-        education1.setYearCompleted(education.getYearCompleted());
-        education1.setYearStarted(education.getYearStarted());
-        education1.setInstitutionName(education.getInstitutionName());
-
+        if (education.getDegree() != null) {
+            education1.setDegree(education.getDegree());
+        }
+        if (education.getEducationType() != null) {
+            education1.setEducationType(education.getEducationType());
+        }
+        if (education.getInstitutionName() != null) {
+            education1.setInstitutionName(education.getInstitutionName());
+        }
+        if (education.getYearEnd() != 0) {
+            education1.setYearCompleted(education.getYearEnd());
+        }
+        if (education.getYearStart() != 0) {
+            education1.setYearStarted(education.getYearStart());
+        }
         return repo.save(education1);
-
     }
 
     public Education deleteEducation(long id){

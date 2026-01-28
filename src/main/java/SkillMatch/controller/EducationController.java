@@ -32,13 +32,13 @@ public class EducationController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Education>> addEducation(@Valid @RequestBody Education education){
-        Education savedEducation = service.addEducation(education);
+    public ResponseEntity<ApiResponse<Education>> addEducation(@Valid @RequestBody EducationDTO educationDTO) {
+        Education savedEducation = service.addEducation(educationDTO);
         return ResponseEntity.ok(ApiResponse.success("Education record added successfully", savedEducation));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Education>> updateEducation(@PathVariable long id, @Valid @RequestBody Education education){
+    public ResponseEntity<ApiResponse<Education>> updateEducation(@PathVariable long id, @Valid @RequestBody EducationDTO education) {
         Education updatedEducation = service.updateEducation(id, education);
         return ResponseEntity.ok(ApiResponse.success("Education record updated successfully", updatedEducation));
     }

@@ -13,4 +13,7 @@ import lombok.Setter;
 public class EducationDTO {
     private String degree;
     private EducationType educationType;
+    private String institutionName;
+    private int yearStart;
+    private int yearEnd;
 }

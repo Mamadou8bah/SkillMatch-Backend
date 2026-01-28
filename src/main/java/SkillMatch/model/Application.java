@@ -1,10 +1,7 @@
 package SkillMatch.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@Builder
 public class Application {
 
     @Id
@@ -32,7 +30,7 @@ public class Application {
     private User user;
 
     @Column(nullable = false)
-    private String status = "Pending";
+    private String status;
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
@@ -40,9 +38,5 @@ public class Application {
     @Column(name = "updated_at",insertable = false)
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-
-
-
 
 }
