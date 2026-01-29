@@ -30,13 +30,12 @@ public class JobPost {
     @ManyToOne
     @JoinColumn(name = "employer_id")
     private Employer employer;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LocationType locationType;
     @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Skill> requiredSkills;
-    @Column(name = "salary", nullable = false)
+    @Column(name = "salary")
     private double salary;
 
     @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL)

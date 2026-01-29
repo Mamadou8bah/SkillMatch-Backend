@@ -78,4 +78,25 @@ public class EducationService {
        repo.delete(education);
        return education;
     }
+
+    public List<EducationDTO> getEducationByUser_Id() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            throw new AuthenticationException("Not logged in");
+        }
+
+        List<Education> educations = repo.getEducationByUser_Id(user.getId());
+        List<EducationDTO> educationDTOList = new ArrayList<>();
+        for (Education education1 : educations) {
+            EducationDTO education = new EducationDTO();
+            education.setDegree(education1.getDegree());
+            education.setEducationType(education1.getEducationType());
+            education.setInstitutionName(education1.getInstitutionName());
+            education.setYearStart(education1.getYearStarted());
+            education.setYearEnd(education1.getYearCompleted());
+            educationDTOList.add(education);
+        }
+        return educationDTOList;
+    }
 }

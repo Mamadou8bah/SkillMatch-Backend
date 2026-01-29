@@ -3,9 +3,12 @@ package SkillMatch.service;
 import SkillMatch.dto.SkillDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Skill;
+import SkillMatch.model.User;
 import SkillMatch.repository.SkillRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +22,9 @@ public class SkillService {
 
     private final SkillRepo repo;
     public Skill addSkill(Skill skill){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        skill.setUser(user);
         return repo.save(skill);
     }
 

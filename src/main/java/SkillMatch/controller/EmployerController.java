@@ -1,18 +1,21 @@
 package SkillMatch.controller;
 
+import SkillMatch.dto.EmployerDTO;
 import SkillMatch.model.Employer;
 import SkillMatch.service.EmployerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @RestController
 @RequestMapping("/employers")
 @RequiredArgsConstructor
 public class EmployerController {
-
 
     private final EmployerService service;
 
@@ -26,8 +29,8 @@ public class EmployerController {
         return ResponseEntity.ok(service.getEmployerById(id));
     }
     @PostMapping
-    public ResponseEntity<?> addEmployer(@RequestBody Employer employer){
-        return ResponseEntity.ok(service.addEmployer(employer));
+    public ResponseEntity<?> addEmployer(@RequestBody EmployerDTO employer, MultipartFile file) throws IOException {
+        return ResponseEntity.ok(service.addEmployer(employer, file));
     }
 
     @DeleteMapping("/{id}")
@@ -37,8 +40,8 @@ public class EmployerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEmployer(@PathVariable long id,@RequestBody Employer employer){
-        service.UpdateEmployer(id,employer);
+    public ResponseEntity<?> updateEmployer(@PathVariable long id, @RequestBody EmployerDTO employer, MultipartFile file) throws IOException {
+        service.UpdateEmployer(id, employer, file);
         return ResponseEntity.ok("Profile Updated");
     }
 }

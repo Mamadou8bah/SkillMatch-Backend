@@ -3,9 +3,12 @@ package SkillMatch.service;
 import SkillMatch.dto.ExperienceDTO;
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Experience;
+import SkillMatch.model.User;
 import SkillMatch.repository.ExperienceRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,12 +26,21 @@ public class ExperienceService {
         List<ExperienceDTO>experienceDTOS=new ArrayList<>();
 
         for (Experience experience:experienceList){
-            experienceDTOS.add(new ExperienceDTO(experience.getCompanyName(),experience.getJobTitle(),experience.getStartDate(),experience.getEndDate()));
+            experienceDTOS.add(new ExperienceDTO(experience.getCompanyName(), experience.getJobTitle(), experience.getStartDate(), experience.getEndDate(), experience.getDescription()));
         }
         return experienceDTOS;
     }
 
-    public Experience addExperience(Experience experience){
+    public Experience addExperience(ExperienceDTO experienceDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Experience experience = Experience.builder()
+                .description(experienceDTO.getDescription())
+                .endDate(experienceDTO.getEndDate())
+                .companyName(experienceDTO.getCompanyName())
+                .jobTitle(experienceDTO.getCompanyName())
+                .user(user)
+                .build();
         return repo.save(experience);
     }
 
@@ -40,15 +52,24 @@ public class ExperienceService {
         repo.deleteById(id);
         return experience;
     }
-    public Experience updateExperience(long id, Experience newExperience){
-        Experience experience=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Experience not found"));
-        experience.setCandidate(newExperience.getCandidate());
-        experience.setDescription(newExperience.getDescription());
-        experience.setCompanyName(newExperience.getCompanyName());
-        experience.setJobTitle(newExperience.getJobTitle());
-        experience.setStartDate(newExperience.getStartDate());
-        experience.setEndDate(newExperience.getEndDate());
 
+    public Experience updateExperience(long id, ExperienceDTO newExperience) {
+        Experience experience=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Experience not found"));
+        if (newExperience.getDescription() != null) {
+            experience.setDescription(newExperience.getDescription());
+        }
+        if (newExperience.getEndDate() != null) {
+            experience.setEndDate(newExperience.getEndDate());
+        }
+        if (newExperience.getStartDate() != null) {
+            experience.setStartDate(newExperience.getStartDate());
+        }
+        if (newExperience.getCompanyName() != null) {
+            experience.setCompanyName(newExperience.getCompanyName());
+        }
+        if (newExperience.getJobTitle() != null) {
+            experience.setJobTitle(newExperience.getJobTitle());
+        }
         return repo.save(experience);
     }
 }

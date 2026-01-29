@@ -1,5 +1,6 @@
 package SkillMatch.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,8 @@ public class EmployerDTO {
     private String  companyName;
     private String website;
     private String industry;
+    private String location;
+    private String description;
+
 
 }

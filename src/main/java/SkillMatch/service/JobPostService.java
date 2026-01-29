@@ -2,6 +2,7 @@ package SkillMatch.service;
 
 import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.JobPost;
+import SkillMatch.model.User;
 import SkillMatch.repository.JobPostRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,9 @@ public class JobPostService {
     private final JobPostRepo repo;
 
     public JobPost addJob(JobPost jobPost){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        jobPost.setEmployer(user.getEmployer());
         return repo.save(jobPost);
     }
     public List<JobPost> getJobPost(int pageNo,int readCount){
@@ -36,19 +42,24 @@ public class JobPostService {
     }
 
     public List<JobPost> searchPosts(String title){
-
-
         List<JobPost>posts=repo.findByTitleContainingIgnoreCase(title);
         return posts;
     }
 
     public JobPost updateJobPost(long id, JobPost newPost){
         JobPost oldPost=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Job post not found"));
-        oldPost.setDescription(newPost.getDescription());
-        oldPost.setEmployer(newPost.getEmployer());
-        oldPost.setTitle(newPost.getTitle());
-        oldPost.setRequiredSkills(newPost.getRequiredSkills());
-
+        if (newPost.getTitle() != null) {
+            oldPost.setTitle(newPost.getTitle());
+        }
+        if (newPost.getDescription() != null) {
+            oldPost.setDescription(newPost.getDescription());
+        }
+        if (newPost.getSalary() != 0) {
+            oldPost.setSalary(newPost.getSalary());
+        }
+        if (newPost.getRequiredSkills() != null) {
+            oldPost.setRequiredSkills(newPost.getRequiredSkills());
+        }
         return repo.save(oldPost);
     }
 

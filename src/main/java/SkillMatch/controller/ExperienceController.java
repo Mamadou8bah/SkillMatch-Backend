@@ -32,13 +32,13 @@ public class ExperienceController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Experience>> addExperience(@Valid @RequestBody Experience experience){
+    public ResponseEntity<ApiResponse<Experience>> addExperience(@Valid @RequestBody ExperienceDTO experience) {
         Experience savedExperience = service.addExperience(experience);
         return ResponseEntity.ok(ApiResponse.success("Experience added successfully", savedExperience));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Experience>> updateExperience(@PathVariable long id, @Valid @RequestBody Experience newExperience){
+    public ResponseEntity<ApiResponse<Experience>> updateExperience(@PathVariable long id, @Valid @RequestBody ExperienceDTO newExperience) {
         Experience updatedExperience = service.updateExperience(id, newExperience);
         return ResponseEntity.ok(ApiResponse.success("Experience updated successfully", updatedExperience));
     }

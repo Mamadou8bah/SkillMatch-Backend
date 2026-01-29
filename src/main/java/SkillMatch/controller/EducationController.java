@@ -48,4 +48,9 @@ public class EducationController {
         service.deleteEducation(id);
         return ResponseEntity.ok(ApiResponse.success("Education record deleted successfully"));
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<?>> getUserEducation() {
+        return ResponseEntity.ok(ApiResponse.success("User records retrieved successfully", service.getEducationByUser_Id()));
+    }
 }
