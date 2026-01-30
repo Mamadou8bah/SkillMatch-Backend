@@ -33,7 +33,7 @@ public class JobPost {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LocationType locationType;
-    @OneToMany(mappedBy = "jobpost",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Skill> requiredSkills;
     private double salary;
 
