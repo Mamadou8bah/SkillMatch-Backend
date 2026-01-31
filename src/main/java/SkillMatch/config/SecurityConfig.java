@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 "/api/auth/register/verify",
                                 "/",
                                 "/employers",
+                                "/ws/**",
                                 "/api/auth/password-reset/request",
                                 "/api/auth/password-reset/validate/*",
                                 "/api/auth/password-reset/confirm",

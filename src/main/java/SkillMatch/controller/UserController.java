@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,6 +26,12 @@ public class UserController {
     public ResponseEntity<ApiResponse<List<UserDTO>>> getUsers(){
         List<UserDTO> users = service.getUsers();
         return ResponseEntity.ok(ApiResponse.success("Users retrieved successfully", users));
+    }
+
+    @GetMapping("/candidates")
+    public ResponseEntity<ApiResponse<List<User>>> getCandidates() {
+        List<User> candidates = service.getCandidates();
+        return ResponseEntity.ok(ApiResponse.success("Candidates retrieved successfully", candidates));
     }
 
     @GetMapping("/{id}")

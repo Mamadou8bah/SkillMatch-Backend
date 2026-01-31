@@ -4,6 +4,9 @@ import SkillMatch.dto.LoginRequest;
 import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
+import SkillMatch.dto.RegistrationStage1Request;
+import SkillMatch.dto.RegistrationStage2Request;
+import SkillMatch.dto.RegistrationStage3Request;
 import SkillMatch.dto.UserDTO;
 import SkillMatch.exception.UserAlreadyExistException;
 import SkillMatch.exception.ResourceNotFoundException;
@@ -14,6 +17,7 @@ import SkillMatch.exception.TokenExpiredException;
 import SkillMatch.exception.InvalidResetTokenException;
 import SkillMatch.exception.PasswordMismatchException;
 import SkillMatch.model.*;
+import SkillMatch.repository.EmployerRepo;
 import SkillMatch.repository.PhotoRepository;
 import SkillMatch.repository.TokenRepo;
 import SkillMatch.repository.UserRepo;
@@ -52,6 +56,9 @@ public class UserService {
     private final UserRepo repo;
 
 
+    private final EmployerRepo employerRepo;
+
+
     private final EmployerService employerService;
 
 
@@ -87,6 +94,10 @@ public class UserService {
             userDTOS.add(new UserDTO(user.getFullName(),user.getRole().toString()));
         }
         return userDTOS;
+    }
+
+    public List<User> getCandidates() {
+        return repo.findByRole(Role.CANDIDATE);
     }
 
 
@@ -131,10 +142,21 @@ public class UserService {
         user.setEmail(request.email());
         user.setPassword(encoder.encode(request.password()));
         user.setLocation(request.location());
-        user.setRole(Role.CANDIDATE);
+        user.setRole(request.isEmployer() ? Role.EMPLOYER : Role.CANDIDATE);
         user.setActive(true);
         user.setAccountVerified(false);
         User saveUser=repo.save(user);
+
+        if (request.isEmployer()) {
+            Employer employer = new Employer();
+            employer.setCompanyName(request.companyName());
+            employer.setIndustry(request.industry());
+            employer.setDescription(request.description());
+            employer.setLocation(request.location());
+            employer.setUser(saveUser);
+            employerRepo.save(employer);
+        }
+
         try {
             sendRegistrationConfirmationEmail(saveUser);
         } catch (Exception e) {
@@ -142,6 +164,54 @@ public class UserService {
         }
         return saveUser;
     }
+
+    @Transactional
+    public User registerStage1(RegistrationStage1Request request) throws UserAlreadyExistException {
+        User existingUser = repo.findByEmail(request.email().trim().toLowerCase());
+        if (existingUser != null) {
+            throw new UserAlreadyExistException("User with this email already exists");
+        }
+
+        User user = new User();
+        user.setFullName(request.fullName());
+        user.setEmail(request.email().trim().toLowerCase());
+        user.setPassword(encoder.encode(request.password()));
+        user.setActive(true);
+        user.setAccountVerified(false);
+        user.setRegistrationStage(1);
+
+        User savedUser = repo.save(user);
+        sendRegistrationConfirmationEmail(savedUser);
+        return savedUser;
+    }
+
+    @Transactional
+    public User registerStage2(Long userId, RegistrationStage2Request request) {
+        User user = repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setLocation(request.location());
+        user.setRole(request.role());
+        user.setRegistrationStage(2);
+        return repo.save(user);
+    }
+
+    @Transactional
+    public User registerStage3(Long userId, RegistrationStage3Request request) {
+        User user = repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getRole() == Role.EMPLOYER) {
+            Employer employer = new Employer();
+            employer.setCompanyName(request.companyName());
+            employer.setIndustry(request.industry());
+            employer.setDescription(request.description());
+            employer.setLocation(user.getLocation());
+            employer.setUser(user);
+            employerRepo.save(employer);
+        }
+
+        user.setRegistrationStage(3);
+        return repo.save(user);
+    }
+
     public LoginResponse login(LoginRequest request){
         User user=repo.findByEmail(request.getEmail());
         if(user==null) throw new ResourceNotFoundException("No user with that email");

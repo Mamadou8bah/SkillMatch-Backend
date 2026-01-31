@@ -50,28 +50,37 @@ public class User implements UserDetails {
     private LocalDateTime createdAt=LocalDateTime.now();
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
     private Employer employer;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Token>tokens;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<SecureToken>secureTokens;
 
     private boolean accountVerified;
 
     private boolean loginDisabled;
 
+    private int registrationStage = 1;
+
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Application> applications;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Education> educations;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Experience> experiences;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Skill> skills;
 
     @Override

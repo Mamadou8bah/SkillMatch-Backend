@@ -6,6 +6,9 @@ import SkillMatch.dto.LoginResponse;
 import SkillMatch.dto.PasswordResetRequestDTO;
 import SkillMatch.dto.PasswordResetDTO;
 import SkillMatch.dto.RegisterRequest;
+import SkillMatch.dto.RegistrationStage1Request;
+import SkillMatch.dto.RegistrationStage2Request;
+import SkillMatch.dto.RegistrationStage3Request;
 import SkillMatch.exception.UserAlreadyExistException;
 import SkillMatch.model.User;
 import SkillMatch.service.UserService;
@@ -31,6 +34,24 @@ public class AuthController {
     public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request)throws UserAlreadyExistException {
         User registeredUser = service.register(request);
         return ResponseEntity.ok(ApiResponse.success("User registered successfully. Please check your email for verification.", registeredUser));
+    }
+
+    @PostMapping("/register/stage1")
+    public ResponseEntity<ApiResponse<User>> registerStage1(@Valid @RequestBody RegistrationStage1Request request) throws UserAlreadyExistException {
+        User user = service.registerStage1(request);
+        return ResponseEntity.ok(ApiResponse.success("Stage 1 completed. Please provide your location and role.", user));
+    }
+
+    @PostMapping("/register/stage2/{userId}")
+    public ResponseEntity<ApiResponse<User>> registerStage2(@PathVariable Long userId, @Valid @RequestBody RegistrationStage2Request request) {
+        User user = service.registerStage2(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Stage 2 completed.", user));
+    }
+
+    @PostMapping("/register/stage3/{userId}")
+    public ResponseEntity<ApiResponse<User>> registerStage3(@PathVariable Long userId, @Valid @RequestBody RegistrationStage3Request request) {
+        User user = service.registerStage3(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Registration completed. Please verify your email.", user));
     }
 
     @PostMapping("/login")

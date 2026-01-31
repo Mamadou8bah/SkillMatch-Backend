@@ -23,6 +23,11 @@ public record RegisterRequest(
         )
         String password,
 
-        String location
+        String location,
+
+        boolean isEmployer,
+        String companyName,
+        String industry,
+        String description
 
 ) {}
