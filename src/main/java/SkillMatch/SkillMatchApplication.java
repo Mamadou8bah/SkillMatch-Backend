@@ -8,6 +8,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableAsync
+@org.springframework.cache.annotation.EnableCaching
+@org.springframework.scheduling.annotation.EnableScheduling
 public class SkillMatchApplication {
 
 	public static void main(String[] args) {

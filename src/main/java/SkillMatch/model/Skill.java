@@ -26,7 +26,7 @@ public class Skill {
 
     @ManyToOne
     @JoinColumn(name = "job_post_id")
-    private JobPost jobpost;
+    private JobPost jobPost;
 
 
 }

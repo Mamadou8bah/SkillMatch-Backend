@@ -31,6 +31,12 @@ public class SkillController {
         return ResponseEntity.ok(ApiResponse.success("Skills retrieved successfully", skills));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<SkillDTO>>> getUserSkills(@PathVariable Long userId) {
+        List<SkillDTO> skills = service.getUserSkills(userId);
+        return ResponseEntity.ok(ApiResponse.success("User skills retrieved successfully", skills));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Skill>> getSkillById(@PathVariable long id){
         Skill skill = service.getSkillById(id);

@@ -1,39 +1,45 @@
 package SkillMatch.service;
 
 import SkillMatch.util.AbstractEmailContext;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import com.resend.Resend;
+import com.resend.services.emails.model.SendEmailRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
-import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
 public class DefaultEmailService implements EmailService{
 
-    private final JavaMailSender emailSender;
-
     private final SpringTemplateEngine templateEngine;
+
+    @Value("${resend.api.key}")
+    private String resendApiKey;
+
+    @Value("${resend.from}")
+    private String resendFrom;
+
     @Override
-    public void sendMail(AbstractEmailContext email) throws MessagingException {
-        MimeMessage mimeMessage=emailSender.createMimeMessage();
-        MimeMessageHelper messageHelper=new MimeMessageHelper(mimeMessage,MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-        
+    public void sendMail(AbstractEmailContext email) {
         Context context=new Context();
         context.setVariables(email.getContext());
         String emailContent=templateEngine.process(email.getTemplateLocation(),context);
-        
-        messageHelper.setTo(email.getTo());
-        messageHelper.setFrom(email.getFrom());
-        messageHelper.setSubject(email.getSubject());
-        messageHelper.setText(emailContent, true); // true indicates HTML content
 
-        emailSender.send(mimeMessage);
+        Resend resend = new Resend(resendApiKey);
+
+        SendEmailRequest sendEmailRequest = SendEmailRequest.builder()
+                .from(resendFrom)
+                .to(email.getTo())
+                .subject(email.getSubject())
+                .html(emailContent)
+                .build();
+
+        try {
+            resend.emails().send(sendEmailRequest);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send email via Resend: " + e.getMessage());
+        }
     }
 }

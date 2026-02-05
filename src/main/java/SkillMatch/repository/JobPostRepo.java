@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface JobPostRepo extends JpaRepository<JobPost,Long> {
     List<JobPost> findByTitleContainingIgnoreCase(String title);
+
+    List<JobPost> findByEmployerId(Long employerId);
 }

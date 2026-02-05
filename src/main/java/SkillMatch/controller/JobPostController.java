@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping({"/post", "/jobs"})
 @RequiredArgsConstructor
 public class JobPostController {
 
@@ -31,6 +31,10 @@ public class JobPostController {
     }
 
 
+    @GetMapping("/myjobs")
+    public ResponseEntity<List<JobPost>> getMyJobs() {
+        return ResponseEntity.ok(service.getJobsByLoggedInEmployer());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getJobPostById(@PathVariable long id){

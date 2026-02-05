@@ -25,6 +25,12 @@ public class ExperienceController {
         return ResponseEntity.ok(ApiResponse.success("Experiences retrieved successfully", experiences));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<ExperienceDTO>>> getUserExperiences(@PathVariable Long userId) {
+        List<ExperienceDTO> experiences = service.getUserExperiences(userId);
+        return ResponseEntity.ok(ApiResponse.success("User experiences retrieved successfully", experiences));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Experience>> getExperienceById(@PathVariable long id){
         Experience experience = service.getExperienceById(id);

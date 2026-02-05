@@ -34,6 +34,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Candidates retrieved successfully", candidates));
     }
 
+    @GetMapping("/network")
+    public ResponseEntity<ApiResponse<List<User>>> getNetwork() {
+        User user = service.getLogInUser();
+        List<User> network = service.getNetwork(user);
+        return ResponseEntity.ok(ApiResponse.success("Network retrieved successfully", network));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable long id){
         User user = service.getUserById(id);
@@ -51,5 +58,13 @@ public class UserController {
     public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable long id, @Valid @RequestBody User newUser){
         User updatedUser = service.updateUser(id, newUser);
         return ResponseEntity.ok(ApiResponse.success("User updated successfully", updatedUser));
+    }
+
+    @PostMapping("/{id}/onboarding")
+    public ResponseEntity<ApiResponse<User>> saveOnboarding(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Object> data) {
+        User user = service.saveOnboardingData(id, data);
+        return ResponseEntity.ok(ApiResponse.success("Onboarding data saved successfully", user));
     }
 }

@@ -5,8 +5,8 @@ import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Skill;
 import SkillMatch.model.User;
 import SkillMatch.repository.SkillRepo;
+import SkillMatch.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,19 @@ public class SkillService {
 
 
     private final SkillRepo repo;
+    private final UserRepo userRepository;
+
+    public List<SkillDTO> getUserSkills(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        List<Skill> skills = repo.findByUser(user);
+        List<SkillDTO> skillDTOS = new ArrayList<>();
+        for (Skill skill : skills) {
+            skillDTOS.add(new SkillDTO(skill.getId(), skill.getTitle()));
+        }
+        return skillDTOS;
+    }
+
     public Skill addSkill(Skill skill){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -33,7 +46,7 @@ public class SkillService {
         List<SkillDTO>skillDTOS=new ArrayList<>();
 
         for (Skill skill:getSkills){
-            skillDTOS.add(new SkillDTO(skill.getTitle()));
+            skillDTOS.add(new SkillDTO(skill.getId(), skill.getTitle()));
         }
         return skillDTOS;
     }

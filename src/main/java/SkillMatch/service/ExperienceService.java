@@ -5,6 +5,7 @@ import SkillMatch.exception.ResourceNotFoundException;
 import SkillMatch.model.Experience;
 import SkillMatch.model.User;
 import SkillMatch.repository.ExperienceRepo;
+import SkillMatch.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,18 @@ import java.util.List;
 public class ExperienceService {
 
     private final ExperienceRepo repo;
+    private final UserRepo userRepository;
+
+    public List<ExperienceDTO> getUserExperiences(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        List<Experience> experienceList = repo.findByUser(user);
+        List<ExperienceDTO> experienceDTOS = new ArrayList<>();
+        for (Experience experience : experienceList) {
+            experienceDTOS.add(new ExperienceDTO(experience.getCompanyName(), experience.getJobTitle(), experience.getStartDate(), experience.getEndDate(), experience.getDescription()));
+        }
+        return experienceDTOS;
+    }
 
     public List<ExperienceDTO> getExperiences(){
         List<Experience>experienceList=repo.findAll();
@@ -38,7 +51,7 @@ public class ExperienceService {
                 .description(experienceDTO.getDescription())
                 .endDate(experienceDTO.getEndDate())
                 .companyName(experienceDTO.getCompanyName())
-                .jobTitle(experienceDTO.getCompanyName())
+                .jobTitle(experienceDTO.getJobTitle())
                 .user(user)
                 .build();
         return repo.save(experience);

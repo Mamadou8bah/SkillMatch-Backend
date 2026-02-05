@@ -27,12 +27,9 @@ import SkillMatch.util.PasswordResetConfirmationEmailContext;
 import SkillMatch.util.JwtUtil;
 import SkillMatch.util.Role;
 import SkillMatch.validator.ObjectValidator;
-import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -46,7 +43,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -57,9 +53,6 @@ public class UserService {
 
 
     private final EmployerRepo employerRepo;
-
-
-    private final EmployerService employerService;
 
 
     private final EmailService emailService;
@@ -84,9 +77,6 @@ public class UserService {
     private final PhotoRepository photoRepository;
 
 
-    private final ObjectValidator<RegisterRequest> userValidator;
-
-
     public List<UserDTO>getUsers(){
         List<User> users= repo.findAll();
         List<UserDTO> userDTOS=new ArrayList<>();
@@ -100,6 +90,11 @@ public class UserService {
         return repo.findByRole(Role.CANDIDATE);
     }
 
+    public List<User> getNetwork(User currentUser) {
+        return repo.findAll().stream()
+                .filter(u -> !u.getId().equals(currentUser.getId()))
+                .toList();
+    }
 
     public User getUserById(long id){
         return repo.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
@@ -212,6 +207,39 @@ public class UserService {
         return repo.save(user);
     }
 
+    @Transactional
+    public User saveOnboardingData(Long userId, java.util.Map<String, Object> data) {
+        User user = repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Update basic info
+        if (data.containsKey("location")) {
+            user.setLocation((String) data.get("location"));
+        }
+
+        // Update role if changed
+        if (data.containsKey("role")) {
+            user.setRole(Role.valueOf((String) data.get("role")));
+        }
+
+        // Handle Skills
+        if (data.containsKey("skills")) {
+            List<String> skillTitles = (List<String>) data.get("skills");
+            List<Skill> skills = skillTitles.stream().map(title -> {
+                Skill s = new Skill();
+                s.setTitle(title);
+                s.setUser(user);
+                return s;
+            }).toList();
+            user.setSkills(skills);
+        }
+
+        // Handle Experience Level (as a simple experience record or user field if needed)
+        // For now, let's mark the stage as complete
+        user.setRegistrationStage(4);
+
+        return repo.save(user);
+    }
+
     public LoginResponse login(LoginRequest request){
         User user=repo.findByEmail(request.getEmail());
         if(user==null) throw new ResourceNotFoundException("No user with that email");
@@ -230,7 +258,7 @@ public class UserService {
         token.setExpired(false);
         token.setUser(user);
         tokenRepo.save(token);
-        return  new LoginResponse(jwtToken);
+        return new LoginResponse(jwtToken, user.getId(), user.getRole().name(), user.getRegistrationStage());
     }
     public User getLogInUser(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -274,11 +302,7 @@ public class UserService {
         context.init(user);
         context.setToken(secureToken.getToken());
         context.buildVerificationUrl(baseUrl,secureToken.getToken());
-        try {
-            emailService.sendMail(context);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        emailService.sendMail(context);
     }
 
     public boolean verifyAccount(String token) {
@@ -349,22 +373,14 @@ public class UserService {
         context.init(user);
         context.setToken(token);
         context.buildResetUrl(baseUrl, token);
-        try {
-            emailService.sendMail(context);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        emailService.sendMail(context);
     }
 
     @Async
     public void sendPasswordResetConfirmationEmail(User user) {
         PasswordResetConfirmationEmailContext context = new PasswordResetConfirmationEmailContext();
         context.init(user);
-        try {
-            emailService.sendMail(context);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Failed to send password reset confirmation email", e);
-        }
+        emailService.sendMail(context);
     }
 
 
